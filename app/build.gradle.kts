@@ -55,6 +55,13 @@ dependencies {
 
     debugImplementation(libs.androidx.compose.ui.tooling)
 
+
+    // Retrofit - used to communicate with the MangaDex API
+    implementation("com.squareup.retrofit2:retrofit:2.11.0")
+
+    // Gson converter - converts MangaDex JSON responses into Java objects
+    implementation("com.squareup.retrofit2:converter-gson:2.11.0")
+
     testImplementation(libs.junit)
     testImplementation(libs.kotlinx.coroutines.test)
     androidTestImplementation(libs.androidx.espresso.core)
