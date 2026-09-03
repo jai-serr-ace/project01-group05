@@ -1,6 +1,7 @@
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.compose.compiler)
+    alias(libs.plugins.ksp)
 }
 
 android {
@@ -11,6 +12,7 @@ android {
     compileSdk {
         version = release(37)
     }
+    compileSdk = 37
 
     defaultConfig {
         applicationId = "com.example.project01_group05"
@@ -43,6 +45,10 @@ android {
 dependencies {
     implementation(libs.androidx.appcompat)
     implementation(libs.androidx.core.ktx)
+    implementation(libs.androidx.room.runtime)
+    implementation(libs.androidx.room.ktx)
+    ksp(libs.androidx.room.compiler)
+    androidTestImplementation(libs.androidx.room.testing)
     implementation(libs.material)
 
     implementation(platform(libs.androidx.compose.bom))
