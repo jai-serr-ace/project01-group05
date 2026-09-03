@@ -40,6 +40,11 @@ android {
             isReturnDefaultValues = true
         }
     }
+
+    buildFeatures {
+        viewBinding = true
+    }
+
 }
 
 dependencies {
@@ -67,6 +72,11 @@ dependencies {
 
     // Gson converter - converts MangaDex JSON responses into Java objects
     implementation("com.squareup.retrofit2:converter-gson:2.11.0")
+
+
+    ksp(libs.androidx.room.compiler)
+    implementation(libs.androidx.room.runtime)
+    implementation(libs.androidx.room.ktx)
 
     testImplementation(libs.junit)
     testImplementation(libs.kotlinx.coroutines.test)
