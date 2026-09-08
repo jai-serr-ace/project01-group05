@@ -7,9 +7,7 @@ plugins {
 android {
     namespace = "com.example.project01_group05"
 
-    compileSdk {
-        version = release(37)
-    }
+    compileSdk = 37
 
     defaultConfig {
         applicationId = "com.example.project01_group05"
@@ -69,13 +67,14 @@ dependencies {
     debugImplementation(libs.androidx.compose.ui.tooling)
 
     // Room
-    ksp(libs.androidx.room.compiler)
     implementation(libs.androidx.room.runtime)
     implementation(libs.androidx.room.ktx)
+    ksp(libs.androidx.room.compiler)
 
     // Tests
     testImplementation(libs.junit)
     testImplementation(libs.kotlinx.coroutines.test)
     androidTestImplementation(libs.androidx.espresso.core)
     androidTestImplementation(libs.androidx.junit)
+    androidTestImplementation(libs.androidx.room.testing)
 }
