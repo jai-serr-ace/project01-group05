@@ -6,7 +6,6 @@ plugins {
 
 android {
     namespace = "com.example.project01_group05"
-
     compileSdk = 37
 
     defaultConfig {
