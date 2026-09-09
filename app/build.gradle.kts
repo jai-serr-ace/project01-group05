@@ -5,9 +5,11 @@ plugins {
 
 android {
     namespace = "com.example.project01_group05"
+
     buildFeatures {
         compose = true
     }
+
     compileSdk {
         version = release(37)
     }
@@ -29,10 +31,12 @@ android {
             }
         }
     }
+
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_11
         targetCompatibility = JavaVersion.VERSION_11
     }
+
     testOptions {
         unitTests {
             isReturnDefaultValues = true
@@ -45,6 +49,13 @@ dependencies {
     implementation(libs.androidx.core.ktx)
     implementation(libs.material)
 
+    // Retrofit - used to communicate with the MangaDex API
+    implementation("com.squareup.retrofit2:retrofit:2.11.0")
+
+    // Gson converter - converts MangaDex JSON responses into Java objects
+    implementation("com.squareup.retrofit2:converter-gson:2.11.0")
+
+    // Jetpack Compose
     implementation(platform(libs.androidx.compose.bom))
     implementation(libs.androidx.compose.ui)
     implementation(libs.androidx.compose.ui.graphics)
