@@ -9,11 +9,18 @@ import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.example.project01_group05.database.UserDao
 
 @Composable
 fun LoginScreen(
-    viewModel: LoginViewModel = viewModel(),
-    onLoginSuccess: (String) -> Unit = {}
+    userDao: UserDao? = null,
+    viewModel: LoginViewModel = if (userDao != null) {
+        viewModel(factory = LoginViewModel.Factory(userDao))
+    } else {
+        viewModel()
+    },
+    onLoginSuccess: (String) -> Unit = {},
+    onCreateAccountClick: () -> Unit = {}
 ) {
     // Collect UI state from ViewModel
     val uiState by viewModel.uiState.collectAsState()
@@ -71,14 +78,9 @@ fun LoginScreen(
                 Spacer(modifier = Modifier.height(16.dp))
             }
             is LoginUiState.Success -> {
-                Text(
-                    text = "Welcome, ${state.username}!",
-                    color = MaterialTheme.colorScheme.primary,
-                    style = MaterialTheme.typography.bodyLarge
-                )
-                Spacer(modifier = Modifier.height(16.dp))
                 LaunchedEffect(state) {
                     onLoginSuccess(state.username)
+                    viewModel.resetState()
                 }
             }
             else -> {}
@@ -98,6 +100,16 @@ fun LoginScreen(
             } else {
                 Text(text = "Login")
             }
+        }
+
+        Spacer(modifier = Modifier.height(8.dp))
+
+        // Create Account button
+        TextButton(
+            onClick = onCreateAccountClick,
+            modifier = Modifier.fillMaxWidth()
+        ) {
+            Text("Don't have an account? Create Account")
         }
     }
 }
