@@ -1,22 +1,20 @@
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.compose.compiler)
+    alias(libs.plugins.ksp)
 }
 
 android {
     namespace = "com.example.project01_group05"
+    compileSdk = 37
 
     buildFeatures {
         compose = true
     }
 
-    compileSdk {
-        version = release(37)
-    }
-
     defaultConfig {
         applicationId = "com.example.project01_group05"
-        minSdk = 36
+        minSdk = 26
         targetSdk = 37
         versionCode = 1
         versionName = "1.0"
@@ -47,6 +45,13 @@ android {
 dependencies {
     implementation(libs.androidx.appcompat)
     implementation(libs.androidx.core.ktx)
+
+    // Room
+    implementation(libs.androidx.room.runtime)
+    implementation(libs.androidx.room.ktx)
+    ksp(libs.androidx.room.compiler)
+    androidTestImplementation(libs.androidx.room.testing)
+
     implementation(libs.material)
 
     // Retrofit - used to communicate with the MangaDex API
@@ -66,6 +71,7 @@ dependencies {
 
     debugImplementation(libs.androidx.compose.ui.tooling)
 
+    // Tests
     testImplementation(libs.junit)
     testImplementation(libs.kotlinx.coroutines.test)
     androidTestImplementation(libs.androidx.espresso.core)
