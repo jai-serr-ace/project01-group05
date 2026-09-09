@@ -6,7 +6,6 @@ plugins {
 
 android {
     namespace = "com.example.project01_group05"
-
     compileSdk = 37
 
     defaultConfig {
@@ -79,7 +78,7 @@ dependencies {
     // Coroutines
     implementation(libs.kotlinx.coroutines.android)
 
-    // Unit Tests
+    // Tests
     testImplementation(libs.junit)
     testImplementation(libs.kotlinx.coroutines.test)
 

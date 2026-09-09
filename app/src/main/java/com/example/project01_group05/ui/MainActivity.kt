@@ -1,29 +1,15 @@
 package com.example.project01_group05.ui
 
 import android.os.Bundle
-import androidx.activity.compose.setContent
 import androidx.appcompat.app.AppCompatActivity
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Surface
-import com.example.project01_group05.ui.search.MangaSearchScreen
-import com.example.project01_group05.ui.search.MangaSearchViewModel
+import com.example.project01_group05.databinding.ActivityMainBinding
 
 class MainActivity : AppCompatActivity() {
+    private lateinit var binding: ActivityMainBinding
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
-        setContent {
-            MaterialTheme {
-                Surface {
-                    MangaSearchScreen(
-                        viewModel = MangaSearchViewModel(),
-                        onMangaSelected = { mangaId ->
-                            println("Selected MangaDex ID: $mangaId")
-                        }
-                    )
-                }
-            }
-        }
+        binding = ActivityMainBinding.inflate(layoutInflater)
+        setContentView(binding.root)
     }
 }
