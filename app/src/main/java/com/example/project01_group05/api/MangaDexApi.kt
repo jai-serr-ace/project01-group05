@@ -10,4 +10,10 @@ interface MangaDexApi {
     fun getManga(
         @Query("limit") limit: Int
     ): Call<MangaResponse>
+
+    @GET("manga")
+    fun searchManga(
+        @Query("title") title: String,
+        @Query("limit") limit: Int = 20
+    ): Call<MangaResponse>
 }
