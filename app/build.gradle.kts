@@ -50,12 +50,9 @@ android {
 dependencies {
     implementation(libs.androidx.appcompat)
     implementation(libs.androidx.core.ktx)
-    implementation(libs.androidx.room.runtime)
-    implementation(libs.androidx.room.ktx)
-    ksp(libs.androidx.room.compiler)
-    androidTestImplementation(libs.androidx.room.testing)
     implementation(libs.material)
 
+    // Jetpack Compose
     implementation(platform(libs.androidx.compose.bom))
     implementation(libs.androidx.compose.ui)
     implementation(libs.androidx.compose.ui.graphics)
@@ -63,22 +60,17 @@ dependencies {
     implementation(libs.androidx.compose.material3)
     implementation(libs.androidx.activity.compose)
     implementation(libs.androidx.lifecycle.viewmodel.compose)
-
     debugImplementation(libs.androidx.compose.ui.tooling)
 
-
-    // Retrofit - used to communicate with the MangaDex API
-    implementation("com.squareup.retrofit2:retrofit:2.11.0")
-
-    // Gson converter - converts MangaDex JSON responses into Java objects
-    implementation("com.squareup.retrofit2:converter-gson:2.11.0")
-
-
-    ksp(libs.androidx.room.compiler)
+    // Room Database
     implementation(libs.androidx.room.runtime)
     implementation(libs.androidx.room.ktx)
+    ksp(libs.androidx.room.compiler)
+    androidTestImplementation(libs.androidx.room.testing)
 
-    // Networking used by chapterDB
+    // Networking
+    implementation(libs.retrofit)
+    implementation(libs.retrofit.gson)
     implementation(libs.okhttp)
     implementation(libs.okhttp.logging)
     implementation(libs.gson)
@@ -86,14 +78,13 @@ dependencies {
     // Coroutines
     implementation(libs.kotlinx.coroutines.android)
 
-    // Tests
+    // Testing
     testImplementation(libs.junit)
     testImplementation(libs.kotlinx.coroutines.test)
 
     // Android Instrumentation Tests
     androidTestImplementation(libs.androidx.espresso.core)
     androidTestImplementation(libs.androidx.junit)
-    androidTestImplementation(libs.androidx.room.testing)
 
     // Compose UI Tests
     androidTestImplementation(platform(libs.androidx.compose.bom))
