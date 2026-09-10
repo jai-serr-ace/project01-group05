@@ -11,7 +11,6 @@ data class MangaEntity(
     val cover: String? = null,
     val chapterLst: Int? = null,
     val status: Boolean? = null,
-    // val chapters: ArrayList<variable>? = null, // TODO: figure out how to store chapters
     val author: String? = null,
     val description: String? = null
 )

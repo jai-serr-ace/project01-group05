@@ -9,7 +9,11 @@ data class MangaPOJO(
         parentColumn = "id",
         entityColumn = "mangaId"
     )
-    val tags: List<TagEntity>
-)
+    val tags: List<TagEntity>,
 
-/*TODO: add establish the connection with the parent manga and the upcoming child, the chapter(s)*/
+    @Relation(
+        parentColumn = "id",
+        entityColumn = "mangaId"
+    )
+    val chapters: List<ChapterEntity>
+)

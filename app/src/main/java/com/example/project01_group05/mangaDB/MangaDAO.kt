@@ -38,4 +38,14 @@ interface MangaDAO {
 
     @Query("DELETE FROM manga WHERE id = :mangaId")
     suspend fun deleteMangaById(mangaId: Int)
+
+    // Chapter methods
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun insertChapters(chapters: List<ChapterEntity>)
+
+    @Query("SELECT * FROM chapters WHERE mangaId = :mangaId")
+    suspend fun getChaptersForManga(mangaId: Int): List<ChapterEntity>
+
+    @Query("UPDATE chapters SET storageStatus = :status WHERE chapterId = :chapterId")
+    suspend fun updateChapterStorageStatus(chapterId: String, status: StorageStatus)
 }

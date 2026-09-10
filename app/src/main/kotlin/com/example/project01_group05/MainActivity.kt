@@ -1,29 +1,46 @@
 package com.example.project01_group05
 
+import android.content.Intent
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
-import androidx.room.Room
-import androidx.room.RoomDatabase
-import com.example.project01_group05.database.UserDatabase
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
+import com.example.project01_group05.mangaDB.MangaDB
+import com.example.project01_group05.ui.CreateAccountActivity
+import com.example.project01_group05.ui.home.HomeScreen
 import com.example.project01_group05.ui.login.LoginScreen
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        val database = MangaDB.getDatabase(applicationContext)
+        val userDao = database.userDao()
 
-        //Create the Room database
-        val database = Room.databaseBuilder(
-            applicationContext, UserDatabase::class.java,
-            "user_database"
-
-        ).build()
-
-        // Get the UserDao from the database
-        val userDao = database.userDAO()
-        // Pass the UserDao to the Login screen
         setContent {
-            LoginScreen(userDao = userDao)
+            var loggedInUser by remember { mutableStateOf<String?>(null) }
+
+            if (loggedInUser == null) {
+                LoginScreen(
+                    userDao = userDao,
+                    onLoginSuccess = { username ->
+                        loggedInUser = username
+                    },
+                    onCreateAccountClick = {
+                        val intent = Intent(this, CreateAccountActivity::class.java)
+                        startActivity(intent)
+                    }
+                )
+            } else {
+                HomeScreen(
+                    username = loggedInUser ?: "",
+                    onLogoutClick = {
+                        loggedInUser = null
+                    }
+                )
+            }
         }
     }
 }
