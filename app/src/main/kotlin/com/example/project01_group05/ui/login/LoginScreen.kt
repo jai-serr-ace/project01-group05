@@ -7,12 +7,14 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.example.project01_group05.database.UserDao
+
 
 @Composable
 fun LoginScreen(
-    viewModel: LoginViewModel = viewModel(),
+    userDao: UserDao,
+    viewModel: LoginViewModel = viewModel(factory = LoginViewModel.loginViewModelFactory(userDao)),
     onLoginSuccess: (String) -> Unit = {}
 ) {
     // Collect UI state from ViewModel
@@ -102,8 +104,3 @@ fun LoginScreen(
     }
 }
 
-@Preview(showBackground = true)
-@Composable
-fun LoginScreenPreview() {
-    LoginScreen()
-}
