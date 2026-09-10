@@ -4,8 +4,7 @@ package com.example.project01_group05.ui.login
 sealed interface LoginUiState {
     data object Idle : LoginUiState
     data object Loading : LoginUiState
-
-    data class Success(val username: String, val isAdmin: Boolean) : LoginUiState
+    data class Success(val username: String) : LoginUiState
     data class Error(val message: String) : LoginUiState
 }
 

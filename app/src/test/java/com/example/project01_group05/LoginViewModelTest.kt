@@ -62,7 +62,7 @@ class LoginViewModelTest {
     fun login_withUserDao_successWhenCredentialsMatch() = runTest {
         val fakeUserDao = object : UserDao {
             private val users = mutableListOf(
-                UserEntity(username = "johndoe", password = "secret123")
+                UserEntity("johndoe", "secret123")
             )
 
             override suspend fun insertUser(user: UserEntity) {
