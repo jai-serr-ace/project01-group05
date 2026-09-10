@@ -146,6 +146,39 @@ class MangaDatabaseTest {
     }
 
     @Test
+    fun insertAndGetChaptersTest() = runBlocking {
+        val mangaId = mangaDao.insertManga(MangaEntity(title = "Chapter Test")).toInt()
+        val chapter = ChapterEntity(
+            chapterId = "uuid-123",
+            mangaId = mangaId,
+            title = "Chapter 1",
+            chapterNumber = "1",
+            volume = "1",
+            pagesCount = 20,
+            storageStatus = StorageStatus.NONE
+        )
+        mangaDao.insertChapters(listOf(chapter))
+
+        val chapters = mangaDao.getChaptersForManga(mangaId)
+        assertEquals(1, chapters.size)
+        assertEquals("Chapter 1", chapters[0].title)
+    }
+
+    @Test
+    fun updateChapterStatusTest() = runBlocking {
+        val mangaId = mangaDao.insertManga(MangaEntity(title = "Status Test")).toInt()
+        val chapterId = "uuid-456"
+        mangaDao.insertChapters(listOf(
+            ChapterEntity(chapterId = chapterId, mangaId = mangaId, title = "C1", pagesCount = 10)
+        ))
+
+        mangaDao.updateChapterStorageStatus(chapterId, StorageStatus.DOWNLOADED)
+
+        val chapters = mangaDao.getChaptersForManga(mangaId)
+        assertEquals(StorageStatus.DOWNLOADED, chapters[0].storageStatus)
+    }
+
+    @Test
     fun frierenAndBerserkFantasyTest() = runBlocking {
         // Insert Frieren
         val frierenId = mangaDao.insertManga(MangaEntity(title = "Frieren")).toInt()

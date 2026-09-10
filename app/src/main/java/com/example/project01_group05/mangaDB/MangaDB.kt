@@ -7,7 +7,15 @@ import androidx.room.RoomDatabase
 import com.example.project01_group05.database.UserDao
 import com.example.project01_group05.database.entities.UserEntity
 
-@Database(entities = [MangaEntity::class, TagEntity::class, UserEntity::class], version = 3)
+@Database(
+    entities = [
+        MangaEntity::class,
+        TagEntity::class,
+        ChapterEntity::class,
+        UserEntity::class
+    ],
+    version = 3
+)
 abstract class MangaDB : RoomDatabase() {
     abstract fun mangaDao(): MangaDAO
     abstract fun userDao(): UserDao
