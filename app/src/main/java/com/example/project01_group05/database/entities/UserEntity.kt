@@ -9,7 +9,8 @@ import androidx.room.PrimaryKey
 //A primary key is a value that uniquely identifies each row in a database table
 //for example: student have student id numbers
 @Entity(tableName = "users")
-data class UserEntity(@PrimaryKey(autoGenerate = true)
+data class UserEntity(
+    @PrimaryKey
     val username: String,
     val password: String,
     val isAdmin: Boolean = false
