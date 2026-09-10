@@ -8,9 +8,14 @@ import androidx.room.PrimaryKey
 //UserEntity becomes a table that collects info on username password and isAdmin
 //A primary key is a value that uniquely identifies each row in a database table
 //for example: student have student id numbers
+
+// Each UserEntity represents one user account
+// My goal with this file was to create a structure for storing
+// user account information in the database
 @Entity(tableName = "users")
 data class UserEntity(
-    @PrimaryKey
+    @PrimaryKey(autoGenerate = true)
+    val id: Int = 0,
     val username: String,
     val password: String,
     val isAdmin: Boolean = false

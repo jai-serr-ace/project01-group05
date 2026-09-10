@@ -11,6 +11,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.project01_group05.database.UserDao
 
+
 @Composable
 fun LoginScreen(
     userDao: UserDao? = null,
@@ -78,6 +79,12 @@ fun LoginScreen(
                 Spacer(modifier = Modifier.height(16.dp))
             }
             is LoginUiState.Success -> {
+                Text(
+                    text = "Welcome, ${state.username}!",
+                    color = MaterialTheme.colorScheme.primary,
+                    style = MaterialTheme.typography.bodyLarge
+                )
+                Spacer(modifier = Modifier.height(16.dp))
                 LaunchedEffect(state) {
                     onLoginSuccess(state.username)
                     viewModel.resetState()
@@ -100,16 +107,6 @@ fun LoginScreen(
             } else {
                 Text(text = "Login")
             }
-        }
-
-        Spacer(modifier = Modifier.height(8.dp))
-
-        // Create Account button
-        TextButton(
-            onClick = onCreateAccountClick,
-            modifier = Modifier.fillMaxWidth()
-        ) {
-            Text("Don't have an account? Create Account")
         }
     }
 }
