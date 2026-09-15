@@ -12,7 +12,8 @@ import androidx.compose.ui.unit.dp
 @Composable
 fun HomeScreen(
     username: String = "",
-    onLogoutClick: () -> Unit = {}
+    onLogoutClick: () -> Unit = {},
+    onSearchClick: () -> Unit = {}
 ) {
     Scaffold(
         topBar = {
@@ -34,18 +35,34 @@ fun HomeScreen(
         ) {
             Column(
                 horizontalAlignment = Alignment.CenterHorizontally,
-                verticalArrangement = Arrangement.Center
+                verticalArrangement = Arrangement.Center,
+                modifier = Modifier.padding(24.dp)
             ) {
                 Text(
-                    text = if (username.isNotBlank()) "Welcome, $username!" else "Home Page",
+                    text = if (username.isNotBlank()) {
+                        "Welcome, $username!"
+                    } else {
+                        "Home Page"
+                    },
                     style = MaterialTheme.typography.headlineSmall
                 )
+
                 Spacer(modifier = Modifier.height(16.dp))
+
                 Text(
                     text = "Your manga library will appear here.",
                     style = MaterialTheme.typography.bodyMedium,
                     color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
+
+                Spacer(modifier = Modifier.height(24.dp))
+
+                Button(
+                    onClick = onSearchClick,
+                    modifier = Modifier.fillMaxWidth()
+                ) {
+                    Text("Search Manga")
+                }
             }
         }
     }

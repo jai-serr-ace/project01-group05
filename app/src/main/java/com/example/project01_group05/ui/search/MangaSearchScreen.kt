@@ -17,6 +17,7 @@ import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -28,7 +29,8 @@ import com.example.project01_group05.api.MangaData
 @Composable
 fun MangaSearchScreen(
     viewModel: MangaSearchViewModel,
-    onMangaSelected: (String) -> Unit
+    onMangaSelected: (String) -> Unit,
+    onBackClick: () -> Unit
 ) {
     val uiState by viewModel.uiState.collectAsState()
 
@@ -37,6 +39,12 @@ fun MangaSearchScreen(
             .fillMaxSize()
             .padding(16.dp)
     ) {
+        TextButton(
+            onClick = onBackClick
+        ) {
+            Text("<-Back")
+        }
+
         Text(
             text = "Search Manga",
             style = MaterialTheme.typography.headlineMedium
