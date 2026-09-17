@@ -14,6 +14,11 @@ import com.example.project01_group05.ui.home.HomeScreen
 import com.example.project01_group05.ui.login.LoginScreen
 import com.example.project01_group05.ui.search.MangaSearchScreen
 import com.example.project01_group05.ui.search.MangaSearchViewModel
+import com.example.project01_group05.database.entities.UserEntity
+import com.example.project01_group05.ui.admin.AdminScreen
+import com.example.project01_group05.ui.admin.UserManagementScreen
+import androidx.lifecycle.lifecycleScope
+import kotlinx.coroutines.launch
 
 class MainActivity : ComponentActivity() {
 
@@ -23,9 +28,24 @@ class MainActivity : ComponentActivity() {
         val database = MangaDB.getDatabase(applicationContext)
         val userDao = database.userDao()
 
+        lifecycleScope.launch {
+            val existingAdmin = userDao.getUserByUsername("admin")
+
+            if (existingAdmin == null) {
+                userDao.insertUser(
+                    UserEntity(
+                        username = "admin",
+                        password = "admin",
+                        isAdmin = true
+                    )
+                )
+            }
+        }
+
+
         setContent {
             var loggedInUser by remember {
-                mutableStateOf<String?>(null)
+                mutableStateOf<UserEntity?>(null)
             }
 
             var currentScreen by remember {
@@ -35,9 +55,13 @@ class MainActivity : ComponentActivity() {
             if (loggedInUser == null) {
                 LoginScreen(
                     userDao = userDao,
-                    onLoginSuccess = { username ->
-                        loggedInUser = username
-                        currentScreen = "home"
+                    onLoginSuccess = { user  ->
+                        loggedInUser = user
+                        if(user.isAdmin) {
+                            currentScreen ="admin"
+                        } else {
+                            currentScreen = "home"
+                        }
                     },
                     onCreateAccountClick = {
                         val intent = Intent(
@@ -51,7 +75,7 @@ class MainActivity : ComponentActivity() {
                 when (currentScreen) {
                     "home" -> {
                         HomeScreen(
-                            username = loggedInUser ?: "",
+                            username = loggedInUser?.username ?: "",
                             onLogoutClick = {
                                 loggedInUser = null
                                 currentScreen = "home"
@@ -61,6 +85,8 @@ class MainActivity : ComponentActivity() {
                             }
                         )
                     }
+
+
 
                     "search" -> {
                         val searchViewModel = remember {
@@ -77,6 +103,35 @@ class MainActivity : ComponentActivity() {
                             }
                         )
                     }
+
+                    "admin" -> {
+                        AdminScreen(
+                            username = loggedInUser?.username?: "",
+                            onUsersClick = {
+                                currentScreen = "users"
+                            },
+                            onMangaClick = {
+
+
+                            },
+                            onLogoutClick = {
+                                loggedInUser = null
+                                currentScreen = "home"
+                            }
+
+
+                        )
+                    }
+
+                    "users" -> {
+                        UserManagementScreen(
+                            userDao = userDao,
+                            onBackClick = {
+                                currentScreen = "admin"
+                            }                        )
+                    }
+
+
                 }
             }
         }

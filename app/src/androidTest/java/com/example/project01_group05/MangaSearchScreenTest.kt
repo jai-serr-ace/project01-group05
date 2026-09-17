@@ -43,7 +43,8 @@ class MangaSearchScreenTest {
         composeTestRule.setContent {
             MangaSearchScreen(
                 viewModel = viewModel,
-                onMangaSelected = {}
+                onMangaSelected = {},
+                onBackClick = {}
             )
         }
 
@@ -89,7 +90,9 @@ class MangaSearchScreenTest {
                 viewModel = viewModel,
                 onMangaSelected = { mangaId ->
                     selectedMangaId = mangaId
-                }
+
+                },
+                onBackClick = {}
             )
         }
 
@@ -126,7 +129,8 @@ class MangaSearchScreenTest {
         composeTestRule.setContent {
             MangaSearchScreen(
                 viewModel = viewModel,
-                onMangaSelected = {}
+                onMangaSelected = {},
+                onBackClick = {}
             )
         }
 

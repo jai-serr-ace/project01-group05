@@ -15,3 +15,4 @@ data class UserEntity(
     val password: String,
     val isAdmin: Boolean = false
 )
+
