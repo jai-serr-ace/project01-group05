@@ -8,6 +8,8 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import com.example.project01_group05.mangaDB.MangaDB
+import com.example.project01_group05.ui.details.MangaDetailsScreen
+import com.example.project01_group05.ui.details.MangaDetailsViewModel
 import com.example.project01_group05.ui.home.HomeScreen
 import com.example.project01_group05.ui.login.CreateAccountScreen
 import com.example.project01_group05.ui.login.LoginScreen
@@ -29,6 +31,10 @@ class MainActivity : ComponentActivity() {
 
             var currentScreen by remember {
                 mutableStateOf("login")
+            }
+
+            var selectedMangaId by remember {
+                mutableStateOf<String?>(null)
             }
 
             if (loggedInUser == null) {
@@ -62,6 +68,7 @@ class MainActivity : ComponentActivity() {
                             onLogoutClick = {
                                 loggedInUser = null
                                 currentScreen = "home"
+                                selectedMangaId = null
                             },
                             onSearchClick = {
                                 currentScreen = "search"
@@ -77,12 +84,33 @@ class MainActivity : ComponentActivity() {
                         MangaSearchScreen(
                             viewModel = searchViewModel,
                             onMangaSelected = { mangaId ->
-                                // Manga details will be connected later.
+                                selectedMangaId = mangaId
+                                currentScreen = "details"
                             },
                             onBackClick = {
                                 currentScreen = "home"
                             }
                         )
+                    }
+
+                    "details" -> {
+                        val mangaId = selectedMangaId
+
+                        if (mangaId != null) {
+                            val detailsViewModel = remember {
+                                MangaDetailsViewModel()
+                            }
+
+                            MangaDetailsScreen(
+                                mangaId = mangaId,
+                                viewModel = detailsViewModel,
+                                onBackClick = {
+                                    currentScreen = "search"
+                                }
+                            )
+                        } else {
+                            currentScreen = "search"
+                        }
                     }
                 }
             }

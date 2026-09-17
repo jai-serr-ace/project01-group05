@@ -2,7 +2,11 @@ package com.example.project01_group05.api
 
 data class MangaAttributes(
     val title: Map<String, String>? = null,
-    val tags: List<TagObject>? = null
+    val tags: List<TagObject>? = null,
+    val description: Map<String, String>? = null,
+    val status: String? = null,
+    val year: Int? = null,
+    val originalLanguage: String? = null
 ) {
 
     fun getDisplayTitle(): String {
@@ -10,13 +14,11 @@ data class MangaAttributes(
             return "Unknown Title"
         }
 
-        // Prefer English when available
         val englishTitle = title["en"]
         if (!englishTitle.isNullOrEmpty()) {
             return englishTitle
         }
 
-        // Otherwise use whichever localized title MangaDex provides
         for (value in title.values) {
             if (value.isNotEmpty()) {
                 return value
@@ -30,6 +32,26 @@ data class MangaAttributes(
         return tags?.mapNotNull { tag ->
             tag.attributes?.name?.get("en") ?: tag.attributes?.name?.values?.firstOrNull()
         } ?: emptyList()
+    }
+
+    fun getDisplayDescription(): String {
+        if (description.isNullOrEmpty()) {
+            return "No description available."
+        }
+
+        val englishDescription = description["en"]
+
+        if (!englishDescription.isNullOrEmpty()) {
+            return englishDescription
+        }
+
+        for (value in description.values) {
+            if (value.isNotEmpty()) {
+                return value
+            }
+        }
+
+        return "No description available."
     }
 }
 

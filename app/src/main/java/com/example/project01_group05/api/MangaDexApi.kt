@@ -2,6 +2,7 @@ package com.example.project01_group05.api
 
 import retrofit2.Call
 import retrofit2.http.GET
+import retrofit2.http.Path
 import retrofit2.http.Query
 
 interface MangaDexApi {
@@ -18,4 +19,9 @@ interface MangaDexApi {
         @Query("limit") limit: Int = 20,
         @Query("includes[]") includes: List<String> = listOf("cover_art")
     ): Call<MangaResponse>
+
+    @GET("manga/{id}")
+    fun getMangaById(
+        @Path("id") id: String
+    ): Call<MangaDetailsResponse>
 }
