@@ -1,6 +1,5 @@
 package com.example.project01_group05
 
-import android.content.Intent
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -9,10 +8,10 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import com.example.project01_group05.mangaDB.MangaDB
-import com.example.project01_group05.ui.CreateAccountActivity
 import com.example.project01_group05.ui.details.MangaDetailsScreen
 import com.example.project01_group05.ui.details.MangaDetailsViewModel
 import com.example.project01_group05.ui.home.HomeScreen
+import com.example.project01_group05.ui.login.CreateAccountScreen
 import com.example.project01_group05.ui.login.LoginScreen
 import com.example.project01_group05.ui.search.MangaSearchScreen
 import com.example.project01_group05.ui.search.MangaSearchViewModel
@@ -31,7 +30,7 @@ class MainActivity : ComponentActivity() {
             }
 
             var currentScreen by remember {
-                mutableStateOf("home")
+                mutableStateOf("login")
             }
 
             var selectedMangaId by remember {
@@ -39,20 +38,28 @@ class MainActivity : ComponentActivity() {
             }
 
             if (loggedInUser == null) {
-                LoginScreen(
-                    userDao = userDao,
-                    onLoginSuccess = { username ->
-                        loggedInUser = username
-                        currentScreen = "home"
-                    },
-                    onCreateAccountClick = {
-                        val intent = Intent(
-                            this,
-                            CreateAccountActivity::class.java
-                        )
-                        startActivity(intent)
-                    }
-                )
+                if (currentScreen == "createAccount") {
+                    CreateAccountScreen(
+                        userDao = userDao,
+                        onAccountCreated = {
+                            currentScreen = "login"
+                        },
+                        onBackClick = {
+                            currentScreen = "login"
+                        }
+                    )
+                } else {
+                    LoginScreen(
+                        userDao = userDao,
+                        onLoginSuccess = { username ->
+                            loggedInUser = username
+                            currentScreen = "home"
+                        },
+                        onCreateAccountClick = {
+                            currentScreen = "createAccount"
+                        }
+                    )
+                }
             } else {
                 when (currentScreen) {
                     "home" -> {
