@@ -90,7 +90,6 @@ class MangaSearchScreenTest {
                 viewModel = viewModel,
                 onMangaSelected = { mangaId ->
                     selectedMangaId = mangaId
-
                 },
                 onBackClick = {}
             )
