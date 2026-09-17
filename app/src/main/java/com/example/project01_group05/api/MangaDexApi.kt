@@ -8,12 +8,14 @@ interface MangaDexApi {
 
     @GET("manga")
     fun getManga(
-        @Query("limit") limit: Int
+        @Query("limit") limit: Int = 30,
+        @Query("includes[]") includes: List<String> = listOf("cover_art")
     ): Call<MangaResponse>
 
     @GET("manga")
     fun searchManga(
         @Query("title") title: String,
-        @Query("limit") limit: Int = 20
+        @Query("limit") limit: Int = 20,
+        @Query("includes[]") includes: List<String> = listOf("cover_art")
     ): Call<MangaResponse>
 }
