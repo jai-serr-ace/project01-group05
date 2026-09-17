@@ -17,4 +17,8 @@ object MangaDexClient {
     fun getApi(): MangaDexApi {
         return retrofit.create(MangaDexApi::class.java)
     }
+
+    fun getApiService(): MangaDexApiService {
+        return retrofit.create(MangaDexApiService::class.java)
+    }
 }
