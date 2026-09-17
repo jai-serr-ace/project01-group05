@@ -31,7 +31,7 @@ class LoginViewModel(private val userDao: UserDao? = null) : ViewModel() {
 
             if (user != null) {
                 Log.d("LoginViewModel", "Valid username and password for user: ${user.username}")
-                _uiState.value = LoginUiState.Success(user.username)
+                _uiState.value = LoginUiState.Success(user)
             } else {
                 Log.d("LoginViewModel", "Invalid username or password")
                 _uiState.value = LoginUiState.Error("Invalid username or password")
