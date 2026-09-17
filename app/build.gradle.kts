@@ -1,17 +1,16 @@
+import io.gitlab.arturbosch.detekt.Detekt
+import io.gitlab.arturbosch.detekt.DetektCreateBaselineTask
+
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.compose.compiler)
     alias(libs.plugins.ksp)
+
+    id("io.gitlab.arturbosch.detekt") version "1.23.8"
 }
 
 android {
     namespace = "com.example.project01_group05"
-    buildFeatures {
-        compose = true
-    }
-    compileSdk {
-        version = release(37)
-    }
     compileSdk = 37
 
     defaultConfig {
@@ -21,7 +20,22 @@ android {
         versionCode = 1
         versionName = "1.0"
 
-        testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+        testInstrumentationRunner =
+            "androidx.test.runner.AndroidJUnitRunner"
+    }
+
+    buildFeatures {
+        compose = true
+        viewBinding = true
+    }
+
+    compileOptions {
+        sourceCompatibility = JavaVersion.VERSION_11
+        targetCompatibility = JavaVersion.VERSION_11
+    }
+
+    testOptions {
+        unitTests.isReturnDefaultValues = true
     }
 
     buildTypes {
@@ -31,20 +45,6 @@ android {
             }
         }
     }
-    compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_11
-        targetCompatibility = JavaVersion.VERSION_11
-    }
-    testOptions {
-        unitTests {
-            isReturnDefaultValues = true
-        }
-    }
-
-    buildFeatures {
-        viewBinding = true
-    }
-
 }
 
 dependencies {
@@ -79,16 +79,39 @@ dependencies {
     // Coroutines
     implementation(libs.kotlinx.coroutines.android)
 
-    // Testing
+    // Unit Testing
     testImplementation(libs.junit)
     testImplementation(libs.kotlinx.coroutines.test)
 
-    // Android Instrumentation Tests
+    // Android Instrumentation Testing
     androidTestImplementation(libs.androidx.espresso.core)
     androidTestImplementation(libs.androidx.junit)
 
-    // Compose UI Tests
+    // Compose UI Testing
     androidTestImplementation(platform(libs.androidx.compose.bom))
-    androidTestImplementation("androidx.compose.ui:ui-test-junit4")
-    debugImplementation("androidx.compose.ui:ui-test-manifest")
+    androidTestImplementation(
+        "androidx.compose.ui:ui-test-junit4"
+    )
+    debugImplementation(
+        "androidx.compose.ui:ui-test-manifest"
+    )
+}
+
+detekt {
+    config.setFrom(
+        files("$projectDir/config/detekt/detekt.yml")
+    )
+    buildUponDefaultConfig = true
+}
+
+tasks.withType<Detekt>().configureEach {
+    jvmTarget = "11"
+}
+
+tasks.withType<DetektCreateBaselineTask>().configureEach {
+    jvmTarget = "11"
+}
+
+kotlin {
+    jvmToolchain(11)
 }
