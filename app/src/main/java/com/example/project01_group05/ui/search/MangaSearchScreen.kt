@@ -10,9 +10,13 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.Button
+import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
@@ -23,7 +27,10 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import coil.compose.AsyncImage
 import com.example.project01_group05.api.MangaData
 
 @Composable
@@ -42,7 +49,7 @@ fun MangaSearchScreen(
         TextButton(
             onClick = onBackClick
         ) {
-            Text("<-Back")
+            Text("<- Back")
         }
 
         Text(
@@ -71,7 +78,7 @@ fun MangaSearchScreen(
             )
 
             Spacer(
-                modifier = Modifier.padding(4.dp)
+                modifier = Modifier.width(8.dp)
             )
 
             Button(
@@ -125,7 +132,7 @@ fun MangaSearchScreen(
                 vertical = 8.dp
             ),
             verticalArrangement = Arrangement.spacedBy(
-                8.dp
+                12.dp
             )
         ) {
             items(
@@ -150,22 +157,79 @@ private fun MangaSearchResultItem(
     manga: MangaData,
     onClick: () -> Unit
 ) {
-    Column(
+    Card(
         modifier = Modifier
             .fillMaxWidth()
             .clickable {
                 onClick()
-            }
-            .padding(12.dp)
+            },
+        elevation = CardDefaults.cardElevation(
+            defaultElevation = 2.dp
+        )
     ) {
-        Text(
-            text = manga.attributes.getDisplayTitle(),
-            style = MaterialTheme.typography.titleMedium
-        )
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(12.dp),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            val coverUrl = manga.getCoverImageUrl()
 
-        Text(
-            text = "MangaDex ID: ${manga.id}",
-            style = MaterialTheme.typography.bodySmall
-        )
+            if (coverUrl != null) {
+                AsyncImage(
+                    model = coverUrl,
+                    contentDescription = manga.attributes.getDisplayTitle(),
+                    contentScale = ContentScale.Crop,
+                    modifier = Modifier.size(
+                        width = 80.dp,
+                        height = 120.dp
+                    )
+                )
+            } else {
+                Card(
+                    modifier = Modifier.size(
+                        width = 80.dp,
+                        height = 120.dp
+                    )
+                ) {
+                    Column(
+                        modifier = Modifier.fillMaxSize(),
+                        horizontalAlignment = Alignment.CenterHorizontally,
+                        verticalArrangement = Arrangement.Center
+                    ) {
+                        Text(
+                            text = "No Cover",
+                            style = MaterialTheme.typography.bodySmall
+                        )
+                    }
+                }
+            }
+
+            Spacer(
+                modifier = Modifier.width(12.dp)
+            )
+
+            Column(
+                modifier = Modifier.weight(1f)
+            ) {
+                Text(
+                    text = manga.attributes.getDisplayTitle(),
+                    style = MaterialTheme.typography.titleMedium,
+                    maxLines = 3,
+                    overflow = TextOverflow.Ellipsis
+                )
+
+                Spacer(
+                    modifier = Modifier.height(6.dp)
+                )
+
+                Text(
+                    text = "MangaDex ID: ${manga.id}",
+                    style = MaterialTheme.typography.bodySmall,
+                    maxLines = 2,
+                    overflow = TextOverflow.Ellipsis
+                )
+            }
+        }
     }
 }

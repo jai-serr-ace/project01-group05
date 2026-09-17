@@ -57,6 +57,16 @@ class MainActivity : ComponentActivity() {
                 mutableStateOf<String?>(null)
             }
 
+            var previousScreen by remember {
+                mutableStateOf("home")
+            }
+
+            // Keep the search ViewModel alive when navigating
+            // between Search and Manga Details.
+            val searchViewModel = remember {
+                MangaSearchViewModel()
+            }
+
             if (loggedInUser == null) {
                 if (currentScreen == "createAccount") {
                     CreateAccountScreen(
@@ -95,22 +105,25 @@ class MainActivity : ComponentActivity() {
                                 loggedInUser = null
                                 currentScreen = "login"
                                 selectedMangaId = null
+                                previousScreen = "home"
                             },
                             onSearchClick = {
                                 currentScreen = "search"
+                            },
+                            onMangaSelected = { mangaId ->
+                                selectedMangaId = mangaId
+                                previousScreen = "home"
+                                currentScreen = "details"
                             }
                         )
                     }
 
                     "search" -> {
-                        val searchViewModel = remember {
-                            MangaSearchViewModel()
-                        }
-
                         MangaSearchScreen(
                             viewModel = searchViewModel,
                             onMangaSelected = { mangaId ->
                                 selectedMangaId = mangaId
+                                previousScreen = "search"
                                 currentScreen = "details"
                             },
                             onBackClick = {
@@ -131,11 +144,12 @@ class MainActivity : ComponentActivity() {
                                 mangaId = mangaId,
                                 viewModel = detailsViewModel,
                                 onBackClick = {
-                                    currentScreen = "search"
+                                    selectedMangaId = null
+                                    currentScreen = previousScreen
                                 }
                             )
                         } else {
-                            currentScreen = "search"
+                            currentScreen = previousScreen
                         }
                     }
 
