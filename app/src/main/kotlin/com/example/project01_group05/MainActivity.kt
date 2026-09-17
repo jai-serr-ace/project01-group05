@@ -1,4 +1,3 @@
-```kotlin
 package com.example.project01_group05
 
 import android.os.Bundle
