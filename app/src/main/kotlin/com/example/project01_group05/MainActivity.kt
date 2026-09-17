@@ -1,6 +1,6 @@
+```kotlin
 package com.example.project01_group05
 
-import android.content.Intent
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -8,18 +8,18 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.lifecycle.lifecycleScope
+import com.example.project01_group05.database.entities.UserEntity
 import com.example.project01_group05.mangaDB.MangaDB
-import com.example.project01_group05.ui.CreateAccountActivity
+import com.example.project01_group05.ui.admin.AdminScreen
+import com.example.project01_group05.ui.admin.UserManagementScreen
 import com.example.project01_group05.ui.details.MangaDetailsScreen
 import com.example.project01_group05.ui.details.MangaDetailsViewModel
 import com.example.project01_group05.ui.home.HomeScreen
+import com.example.project01_group05.ui.login.CreateAccountScreen
 import com.example.project01_group05.ui.login.LoginScreen
 import com.example.project01_group05.ui.search.MangaSearchScreen
 import com.example.project01_group05.ui.search.MangaSearchViewModel
-import com.example.project01_group05.database.entities.UserEntity
-import com.example.project01_group05.ui.admin.AdminScreen
-import com.example.project01_group05.ui.admin.UserManagementScreen
-import androidx.lifecycle.lifecycleScope
 import kotlinx.coroutines.launch
 
 class MainActivity : ComponentActivity() {
@@ -44,14 +44,13 @@ class MainActivity : ComponentActivity() {
             }
         }
 
-
         setContent {
             var loggedInUser by remember {
                 mutableStateOf<UserEntity?>(null)
             }
 
             var currentScreen by remember {
-                mutableStateOf("home")
+                mutableStateOf("login")
             }
 
             var selectedMangaId by remember {
@@ -59,32 +58,42 @@ class MainActivity : ComponentActivity() {
             }
 
             if (loggedInUser == null) {
-                LoginScreen(
-                    userDao = userDao,
-                    onLoginSuccess = { user  ->
-                        loggedInUser = user
-                        if(user.isAdmin) {
-                            currentScreen ="admin"
-                        } else {
-                            currentScreen = "home"
+                if (currentScreen == "createAccount") {
+                    CreateAccountScreen(
+                        userDao = userDao,
+                        onAccountCreated = {
+                            currentScreen = "login"
+                        },
+                        onBackClick = {
+                            currentScreen = "login"
                         }
-                    },
-                    onCreateAccountClick = {
-                        val intent = Intent(
-                            this,
-                            CreateAccountActivity::class.java
-                        )
-                        startActivity(intent)
-                    }
-                )
+                    )
+                } else {
+                    LoginScreen(
+                        userDao = userDao,
+                        onLoginSuccess = { user ->
+                            loggedInUser = user
+
+                            if (user.isAdmin) {
+                                currentScreen = "admin"
+                            } else {
+                                currentScreen = "home"
+                            }
+                        },
+                        onCreateAccountClick = {
+                            currentScreen = "createAccount"
+                        }
+                    )
+                }
             } else {
                 when (currentScreen) {
+
                     "home" -> {
                         HomeScreen(
                             username = loggedInUser?.username ?: "",
                             onLogoutClick = {
                                 loggedInUser = null
-                                currentScreen = "home"
+                                currentScreen = "login"
                                 selectedMangaId = null
                             },
                             onSearchClick = {
@@ -92,8 +101,6 @@ class MainActivity : ComponentActivity() {
                             }
                         )
                     }
-
-
 
                     "search" -> {
                         val searchViewModel = remember {
@@ -134,20 +141,16 @@ class MainActivity : ComponentActivity() {
 
                     "admin" -> {
                         AdminScreen(
-                            username = loggedInUser?.username?: "",
+                            username = loggedInUser?.username ?: "",
                             onUsersClick = {
                                 currentScreen = "users"
                             },
                             onMangaClick = {
-
-
                             },
                             onLogoutClick = {
                                 loggedInUser = null
-                                currentScreen = "home"
+                                currentScreen = "login"
                             }
-
-
                         )
                     }
 
@@ -156,10 +159,9 @@ class MainActivity : ComponentActivity() {
                             userDao = userDao,
                             onBackClick = {
                                 currentScreen = "admin"
-                            }                        )
+                            }
+                        )
                     }
-
-
                 }
             }
         }
