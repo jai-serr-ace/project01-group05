@@ -1,7 +1,8 @@
 package com.example.project01_group05.api
 
 data class MangaAttributes(
-    val title: Map<String, String>?,
+    val title: Map<String, String>? = null,
+    val tags: List<TagObject>? = null,
     val description: Map<String, String>? = null,
     val status: String? = null,
     val year: Int? = null,
@@ -14,7 +15,6 @@ data class MangaAttributes(
         }
 
         val englishTitle = title["en"]
-
         if (!englishTitle.isNullOrEmpty()) {
             return englishTitle
         }
@@ -26,6 +26,12 @@ data class MangaAttributes(
         }
 
         return "Unknown Title"
+    }
+
+    fun getTagNames(): List<String> {
+        return tags?.mapNotNull { tag ->
+            tag.attributes?.name?.get("en") ?: tag.attributes?.name?.values?.firstOrNull()
+        } ?: emptyList()
     }
 
     fun getDisplayDescription(): String {
@@ -48,3 +54,13 @@ data class MangaAttributes(
         return "No description available."
     }
 }
+
+data class TagObject(
+    val id: String,
+    val type: String,
+    val attributes: TagAttributes?
+)
+
+data class TagAttributes(
+    val name: Map<String, String>?
+)

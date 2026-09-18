@@ -10,6 +10,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.project01_group05.database.UserDao
+import com.example.project01_group05.database.entities.UserEntity
 
 @Composable
 fun LoginScreen(
@@ -19,7 +20,7 @@ fun LoginScreen(
     } else {
         viewModel()
     },
-    onLoginSuccess: (String) -> Unit = {},
+    onLoginSuccess: (UserEntity) -> Unit = {},
     onCreateAccountClick: () -> Unit = {}
 ) {
     // Collect UI state from ViewModel
@@ -79,7 +80,7 @@ fun LoginScreen(
             }
             is LoginUiState.Success -> {
                 LaunchedEffect(state) {
-                    onLoginSuccess(state.username)
+                    onLoginSuccess(state.user)
                     viewModel.resetState()
                 }
             }

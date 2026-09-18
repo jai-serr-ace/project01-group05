@@ -8,6 +8,7 @@ android {
     namespace = "com.example.project01_group05"
     buildFeatures {
         compose = true
+        viewBinding = false
     }
     compileSdk {
         version = release(37)
@@ -41,9 +42,7 @@ android {
         }
     }
 
-    buildFeatures {
-        viewBinding = true
-    }
+
 
 }
 
@@ -61,6 +60,7 @@ dependencies {
     implementation(libs.androidx.activity.compose)
     implementation(libs.androidx.lifecycle.viewmodel.compose)
     implementation(libs.androidx.documentfile)
+    implementation(libs.coil.compose)
     debugImplementation(libs.androidx.compose.ui.tooling)
 
     // Room Database
@@ -90,6 +90,6 @@ dependencies {
 
     // Compose UI Tests
     androidTestImplementation(platform(libs.androidx.compose.bom))
-    androidTestImplementation("androidx.compose.ui:ui-test-junit4")
-    debugImplementation("androidx.compose.ui:ui-test-manifest")
+    androidTestImplementation(libs.androidx.compose.ui.test.junit4)
+    debugImplementation(libs.androidx.compose.ui.test.manifest)
 }
