@@ -12,6 +12,8 @@ import com.example.project01_group05.mangaDB.MangaDB
 import com.example.project01_group05.ui.CreateAccountActivity
 import com.example.project01_group05.ui.details.MangaDetailsScreen
 import com.example.project01_group05.ui.details.MangaDetailsViewModel
+import com.example.project01_group05.ui.downloadManager.DownloadManagerScreen
+import com.example.project01_group05.ui.downloadManager.DownloadManagerViewModel
 import com.example.project01_group05.ui.home.HomeScreen
 import com.example.project01_group05.ui.login.LoginScreen
 import com.example.project01_group05.ui.search.MangaSearchScreen
@@ -65,6 +67,21 @@ class MainActivity : ComponentActivity() {
                             },
                             onSearchClick = {
                                 currentScreen = "search"
+                            },
+                            onSettingsClick = {
+                                currentScreen = "settings"
+                            }
+                        )
+                    }
+
+                    "settings" -> {
+                        val downloadViewModel = remember {
+                            DownloadManagerViewModel(application)
+                        }
+                        DownloadManagerScreen(
+                            viewModel = downloadViewModel,
+                            onBackClick = {
+                                currentScreen = "home"
                             }
                         )
                     }

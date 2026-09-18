@@ -111,11 +111,13 @@ fun ChapterReaderScreen(
                         is ReadingMode.RightToLeft -> RTLPager(
                             pages = uiState.pages,
                             chapterTitle = uiState.chapterTitle,
+                            hasNext = uiState.hasNextChapter,
                             onEndOfChapter = onNextChapter
                         )
                         is ReadingMode.Vertical -> VerticalReader(
                             pages = uiState.pages,
                             chapterTitle = uiState.chapterTitle,
+                            hasNext = uiState.hasNextChapter,
                             onEndOfChapter = onNextChapter
                         )
                     }
@@ -129,7 +131,7 @@ fun ChapterReaderScreen(
  * A horizontal pager that displays manga pages in a Right-to-Left (RTL) flow.
  */
 @Composable
-fun RTLPager(pages: List<String>, chapterTitle: String, onEndOfChapter: () -> Unit) {
+fun RTLPager(pages: List<String>, chapterTitle: String, hasNext: Boolean, onEndOfChapter: () -> Unit) {
     // We add +1 for the end-of-chapter view
     val pagerState = rememberPagerState(pageCount = { pages.size + 1 })
     
@@ -144,6 +146,7 @@ fun RTLPager(pages: List<String>, chapterTitle: String, onEndOfChapter: () -> Un
         } else {
             EndOfChapterView(
                 currentChapterTitle = chapterTitle,
+                hasNext = hasNext,
                 onNextChapter = onEndOfChapter
             )
         }
@@ -154,7 +157,7 @@ fun RTLPager(pages: List<String>, chapterTitle: String, onEndOfChapter: () -> Un
  * A vertical pager that displays manga pages in a continuous top-to-bottom flow.
  */
 @Composable
-fun VerticalReader(pages: List<String>, chapterTitle: String, onEndOfChapter: () -> Unit) {
+fun VerticalReader(pages: List<String>, chapterTitle: String, hasNext: Boolean, onEndOfChapter: () -> Unit) {
     // We add +1 for the end-of-chapter view
     val pagerState = rememberPagerState(pageCount = { pages.size + 1 })
     
@@ -168,6 +171,7 @@ fun VerticalReader(pages: List<String>, chapterTitle: String, onEndOfChapter: ()
         } else {
             EndOfChapterView(
                 currentChapterTitle = chapterTitle,
+                hasNext = hasNext,
                 onNextChapter = onEndOfChapter
             )
         }
@@ -198,7 +202,7 @@ fun MangaPage(imageUrl: String) {
  * Displays the end-of-chapter message and provides a button to proceed to the next chapter.
  */
 @Composable
-fun EndOfChapterView(currentChapterTitle: String, onNextChapter: () -> Unit) {
+fun EndOfChapterView(currentChapterTitle: String, hasNext: Boolean, onNextChapter: () -> Unit) {
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -214,8 +218,11 @@ fun EndOfChapterView(currentChapterTitle: String, onNextChapter: () -> Unit) {
             color = Color.White
         )
         Spacer(modifier = Modifier.height(16.dp))
-        Button(onClick = onNextChapter) {
-            Text("Next Chapter")
+        Button(
+            onClick = onNextChapter,
+            enabled = hasNext
+        ) {
+            Text(if (hasNext) "Next Chapter" else "No more chapters left")
         }
     }
 }

@@ -14,6 +14,9 @@ import android.app.Application
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.project01_group05.api.MangaDexClient
+import com.example.project01_group05.mangaDB.MangaDB
+import com.example.project01_group05.mangaDB.StorageStatus
+import com.example.project01_group05.storage.ChapterStorageLocation
 import com.example.project01_group05.storage.ChapterStorageManager
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -39,7 +42,8 @@ data class ChapterUiState(
     val error: String? = null,
     val readingMode: ReadingMode = ReadingMode.RightToLeft,
     val chapterTitle: String = "",
-    val chapterNumber: String = ""
+    val chapterNumber: String = "",
+    val hasNextChapter: Boolean = false
 )
 
 /**
@@ -65,25 +69,42 @@ class DisplayChapterViewModel(application: Application) : AndroidViewModel(appli
      * @param mangaId The UUID of the manga.
      * @param chapterId The UUID of the chapter to load.
      * @param title The title of the chapter for display purposes.
+     * @param hasNext Explicit flag indicating whether a next chapter exists in sequence.
      */
-    fun loadChapter(mangaId: String, chapterId: String, title: String? = null) {
+    fun loadChapter(mangaId: String, chapterId: String, title: String? = null, hasNext: Boolean = false) {
         viewModelScope.launch {
             _uiState.value = _uiState.value.copy(
                 isLoading = true, 
                 error = null,
-                chapterTitle = title ?: ""
+                chapterTitle = title ?: "",
+                hasNextChapter = hasNext
             )
             
             try {
-                // 1. Check local storage (External first, then Cache)
-                var localFiles = storageManager.getChapterFiles(mangaId, chapterId, true)
-                if (localFiles.isEmpty()) {
-                    localFiles = storageManager.getChapterFiles(mangaId, chapterId, false)
+                // 1. Check local DB and storage
+                val db = MangaDB.getDatabase(getApplication())
+                val chapterEntity = db.mangaDao().getChapterByDexId(chapterId)
+                
+                val location = when {
+                    chapterEntity?.storageStatus == StorageStatus.CACHED -> {
+                        ChapterStorageLocation.Cache
+                    }
+                    chapterEntity?.downloadRootUri != null -> {
+                        ChapterStorageLocation.UserFolder(chapterEntity.downloadRootUri)
+                    }
+                    else -> {
+                        ChapterStorageLocation.LegacyExternal
+                    }
                 }
 
-                if (localFiles.isNotEmpty()) {
-                    // Sort files to ensure correct page order
-                    val sortedPages = localFiles.sortedBy { it.name }.map { it.absolutePath }
+                var localPages = storageManager.getChapterPages(mangaId, chapterId, location)
+                if (localPages.isEmpty() && location == ChapterStorageLocation.LegacyExternal) {
+                    // Try fallback to cache if legacy external is empty and not specified in DB
+                    localPages = storageManager.getChapterPages(mangaId, chapterId, ChapterStorageLocation.Cache)
+                }
+
+                if (localPages.isNotEmpty()) {
+                    val sortedPages = localPages.map { it.source }
                     _uiState.value = _uiState.value.copy(isLoading = false, pages = sortedPages)
                 } else {
                     // 2. Fetch from API
