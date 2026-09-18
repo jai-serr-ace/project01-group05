@@ -19,6 +19,7 @@ import kotlinx.coroutines.launch
 
 data class DownloadManagerUiState(
     val downloadedChapters: List<ChapterEntity> = emptyList(),
+    val mangaIdToDexId: Map<Int, String> = emptyMap(),
     val cacheSize: String = "0 B",
     val selectedFolderUri: String? = null,
     val selectedFolderName: String = "App default",
@@ -43,7 +44,12 @@ class DownloadManagerViewModel(application: Application) : AndroidViewModel(appl
     fun loadDownloads() {
         viewModelScope.launch(Dispatchers.IO) {
             val chapters = db.mangaDao().getAllDownloadedChapters()
-            _uiState.value = _uiState.value.copy(downloadedChapters = chapters)
+            val mangas = db.mangaDao().getAllMangas()
+            val map = mangas.associate { it.id to (it.mangaDexId ?: "") }
+            _uiState.value = _uiState.value.copy(
+                downloadedChapters = chapters,
+                mangaIdToDexId = map
+            )
         }
     }
     //This method uses Android SAF to select a folder for download.

@@ -113,6 +113,11 @@ class MainActivity : ComponentActivity() {
                             },
                             onSettingsClick = {
                                 currentScreen = "settings"
+                            },
+                            onMangaSelected = { mangaId ->
+                                selectedMangaId = mangaId
+                                previousScreen = "home"
+                                currentScreen = "details"
                             }
                         )
                     }

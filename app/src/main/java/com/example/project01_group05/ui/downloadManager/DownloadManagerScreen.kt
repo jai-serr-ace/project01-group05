@@ -3,6 +3,7 @@ package com.example.project01_group05.ui.downloadManager
 import android.net.Uri
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -23,7 +24,8 @@ import androidx.compose.ui.unit.dp
 @Composable
 fun DownloadManagerScreen(
     viewModel: DownloadManagerViewModel,
-    onBackClick: () -> Unit
+    onBackClick: () -> Unit,
+    onMangaSelected: (String) -> Unit
 ) {
     val uiState by viewModel.uiState.collectAsState()
     val folderPicker = rememberLauncherForActivityResult(ActivityResultContracts.OpenDocumentTree()) { uri ->
@@ -103,8 +105,18 @@ fun DownloadManagerScreen(
             Text("Downloaded Chapters", style = MaterialTheme.typography.headlineSmall)
             LazyColumn(modifier = Modifier.weight(1f)) {
                 items(uiState.downloadedChapters, key = { it.chapterId }) { chapter ->
+                    val mangaDexId = uiState.mangaIdToDexId[chapter.mangaId]
                     Row(
-                        modifier = Modifier.fillMaxWidth().padding(vertical = 8.dp),
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .then(
+                                if (mangaDexId != null && mangaDexId.isNotEmpty()) {
+                                    Modifier.clickable { onMangaSelected(mangaDexId) }
+                                } else {
+                                    Modifier
+                                }
+                            )
+                            .padding(vertical = 8.dp),
                         verticalAlignment = Alignment.CenterVertically,
                         horizontalArrangement = Arrangement.SpaceBetween
                     ) {

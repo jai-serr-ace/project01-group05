@@ -30,8 +30,7 @@ fun HomeScreen(
     viewModel: HomeViewModel = viewModel(),
     onLogoutClick: () -> Unit = {},
     onSearchClick: () -> Unit = {},
-    onSettingsClick: () -> Unit = {}
-    onSearchClick: () -> Unit = {},
+    onSettingsClick: () -> Unit = {},
     onMangaSelected: (String) -> Unit = {}
 ) {
     val uiState by viewModel.uiState.collectAsState()
