@@ -45,7 +45,7 @@ class LoginViewModelTest {
 
         val currentState = viewModel.uiState.value
         assertTrue(currentState is LoginUiState.Success)
-        assertEquals("admin", (currentState as LoginUiState.Success).username)
+        assertEquals("admin", (currentState as LoginUiState.Success).user.username)
     }
 
     @Test
@@ -91,6 +91,6 @@ class LoginViewModelTest {
 
         val state = viewModelWithDao.uiState.value
         assertTrue(state is LoginUiState.Success)
-        assertEquals("johndoe", (state as LoginUiState.Success).username)
+        assertEquals("johndoe", (state as LoginUiState.Success).user.username)
     }
 }
