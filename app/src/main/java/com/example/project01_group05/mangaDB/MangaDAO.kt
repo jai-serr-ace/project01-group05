@@ -28,6 +28,9 @@ interface MangaDAO {
     @Query("SELECT * FROM manga")
     suspend fun getAllMangas(): List<MangaEntity>
 
+    @Query("SELECT * FROM manga WHERE mangaDexId = :mangaDexId LIMIT 1")
+    suspend fun getMangaByDexId(mangaDexId: String): MangaEntity?
+
     @androidx.room.Transaction
     @Query("SELECT * FROM manga")
     suspend fun getAllMangaWithTags(): List<MangaPOJO>
@@ -46,6 +49,22 @@ interface MangaDAO {
     @Query("SELECT * FROM chapters WHERE mangaId = :mangaId")
     suspend fun getChaptersForManga(mangaId: Int): List<ChapterEntity>
 
+    @Query("SELECT * FROM chapters WHERE chapterId = :chapterId LIMIT 1")
+    suspend fun getChapterByDexId(chapterId: String): ChapterEntity?
+
     @Query("UPDATE chapters SET storageStatus = :status WHERE chapterId = :chapterId")
     suspend fun updateChapterStorageStatus(chapterId: String, status: StorageStatus)
+
+    @Query("UPDATE chapters SET storageStatus = :status, downloadRootUri = :downloadRootUri WHERE chapterId = :chapterId")
+    suspend fun updateChapterStorage(
+        chapterId: String,
+        status: StorageStatus,
+        downloadRootUri: String?
+    )
+
+    @Query("DELETE FROM chapters WHERE chapterId = :chapterId")
+    suspend fun deleteChapterByDexId(chapterId: String)
+
+    @Query("SELECT * FROM chapters WHERE storageStatus = 'DOWNLOADED' OR storageStatus = 'CACHED'")
+    suspend fun getAllDownloadedChapters(): List<ChapterEntity>
 }

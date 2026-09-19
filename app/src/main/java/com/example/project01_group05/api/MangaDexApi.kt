@@ -24,4 +24,17 @@ interface MangaDexApi {
     fun getMangaById(
         @Path("id") id: String
     ): Call<MangaDetailsResponse>
+
+    @GET("manga/{id}/feed")
+    fun getMangaFeed(
+        @Path("id") id: String,
+        @Query("translatedLanguage[]") languages: List<String> = listOf("en"),
+        @Query("order[chapter]") order: String = "desc",
+        @Query("limit") limit: Int = 100
+    ): Call<ChapterListResponse>
+
+    @GET("at-home/server/{chapterId}")
+    fun getAtHomeServer(
+        @Path("chapterId") chapterId: String
+    ): Call<AtHomeResponse>
 }
