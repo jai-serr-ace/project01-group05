@@ -37,7 +37,8 @@ class MangaDetailsScreenTest {
         composeTestRule.setContent {
             MangaDetailsContent(
                 manga = testManga,
-                onBackClick = {}
+                onBackClick = {},
+                onViewChaptersClick = {}
             )
         }
 
@@ -75,7 +76,8 @@ class MangaDetailsScreenTest {
                 manga = testManga,
                 onBackClick = {
                     backClicked = true
-                }
+                },
+                onViewChaptersClick = {}
             )
         }
 
@@ -84,5 +86,26 @@ class MangaDetailsScreenTest {
             .performClick()
 
         assertTrue(backClicked)
+    }
+
+    @Test
+    fun viewChaptersButton_callsOnViewChaptersClick() {
+        var viewChaptersClicked = false
+
+        composeTestRule.setContent {
+            MangaDetailsContent(
+                manga = testManga,
+                onBackClick = {},
+                onViewChaptersClick = {
+                    viewChaptersClicked = true
+                }
+            )
+        }
+
+        composeTestRule
+            .onNodeWithText("View Chapters")
+            .performClick()
+
+        assertTrue(viewChaptersClicked)
     }
 }
