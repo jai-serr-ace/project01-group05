@@ -12,6 +12,7 @@ import kotlinx.coroutines.flow.asStateFlow
 data class MangaSearchUiState(
     val query: String = "",
     val results: List<MangaData> = emptyList(),
+    val isSafeOnly: Boolean = true,
     val isLoading: Boolean = false,
     val errorMessage: String? = null,
     val hasSearched: Boolean = false
@@ -34,6 +35,12 @@ class MangaSearchViewModel(
         )
     }
 
+    fun setSafeOnly(enabled: Boolean) {
+        _uiState.value = _uiState.value.copy(
+            isSafeOnly = enabled
+        )
+    }
+
     fun search() {
         val title = _uiState.value.query.trim()
 
@@ -53,9 +60,16 @@ class MangaSearchViewModel(
             hasSearched = true
         )
 
+        val contentRatings = if (_uiState.value.isSafeOnly) {
+            listOf("safe")
+        } else {
+            listOf("safe", "suggestive", "erotica", "pornographic")
+        }
+
         repository.searchManga(
-            title,
-            object : MangaCallback {
+            title = title,
+            contentRatings = contentRatings,
+            callback = object : MangaCallback {
 
                 override fun onSuccess(
                     mangaList: List<MangaData>

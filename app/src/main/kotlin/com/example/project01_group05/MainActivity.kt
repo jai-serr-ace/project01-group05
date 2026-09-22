@@ -8,6 +8,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.project01_group05.database.entities.UserEntity
 import com.example.project01_group05.mangaDB.MangaDB
 import com.example.project01_group05.ui.admin.AdminScreen
@@ -15,6 +16,7 @@ import com.example.project01_group05.ui.admin.UserManagementScreen
 import com.example.project01_group05.ui.details.MangaDetailsScreen
 import com.example.project01_group05.ui.details.MangaDetailsViewModel
 import com.example.project01_group05.ui.home.HomeScreen
+import com.example.project01_group05.ui.home.HomeViewModel
 import com.example.project01_group05.ui.login.CreateAccountScreen
 import com.example.project01_group05.ui.login.LoginScreen
 import com.example.project01_group05.ui.search.MangaSearchScreen
@@ -60,6 +62,8 @@ class MainActivity : ComponentActivity() {
                 mutableStateOf("home")
             }
 
+            val homeViewModel: HomeViewModel = viewModel()
+
             // Keep the search ViewModel alive when navigating
             // between Search and Manga Details.
             val searchViewModel = remember {
@@ -100,6 +104,7 @@ class MainActivity : ComponentActivity() {
                     "home" -> {
                         HomeScreen(
                             username = loggedInUser?.username ?: "",
+                            viewModel = homeViewModel,
                             onLogoutClick = {
                                 loggedInUser = null
                                 currentScreen = "login"
@@ -107,6 +112,7 @@ class MainActivity : ComponentActivity() {
                                 previousScreen = "home"
                             },
                             onSearchClick = {
+                                searchViewModel.setSafeOnly(homeViewModel.uiState.value.isSafeOnly)
                                 currentScreen = "search"
                             },
                             onMangaSelected = { mangaId ->

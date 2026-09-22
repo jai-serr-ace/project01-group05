@@ -4,6 +4,7 @@ interface MangaSearchRepository {
 
     fun searchManga(
         title: String,
+        contentRatings: List<String> = listOf("safe", "suggestive"),
         callback: MangaCallback
     )
 }

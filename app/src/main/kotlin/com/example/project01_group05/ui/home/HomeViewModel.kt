@@ -16,6 +16,7 @@ data class HomeUiState(
     val mangaByTag: Map<String, List<MangaData>> = emptyMap(),
     val popularTags: List<String> = emptyList(),
     val selectedTagForSeeAll: String? = null,
+    val isSafeOnly: Boolean = true,
     val isLoading: Boolean = false,
     val errorMessage: String? = null
 )
@@ -29,11 +30,22 @@ class HomeViewModel : ViewModel() {
         loadManga()
     }
 
+    fun toggleSafeOnly(enabled: Boolean) {
+        _uiState.value = _uiState.value.copy(isSafeOnly = enabled)
+        loadManga()
+    }
+
     fun loadManga() {
         _uiState.value = _uiState.value.copy(isLoading = true, errorMessage = null)
         val api = MangaDexClient.getApi()
 
-        api.getManga(limit = 60).enqueue(object : Callback<MangaResponse> {
+        val contentRatings = if (_uiState.value.isSafeOnly) {
+            listOf("safe")
+        } else {
+            listOf("safe", "suggestive", "erotica", "pornographic")
+        }
+
+        api.getManga(limit = 60, contentRating = contentRatings).enqueue(object : Callback<MangaResponse> {
             override fun onResponse(
                 call: Call<MangaResponse>,
                 response: Response<MangaResponse>
