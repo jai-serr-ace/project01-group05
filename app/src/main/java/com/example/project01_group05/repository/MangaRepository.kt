@@ -4,6 +4,7 @@ import com.example.project01_group05.api.MangaDexApiService
 import com.example.project01_group05.mangaDB.ChapterEntity
 import com.example.project01_group05.mangaDB.MangaDAO
 import com.example.project01_group05.mangaDB.StorageStatus
+import com.example.project01_group05.storage.ChapterStorageLocation
 import com.example.project01_group05.storage.ChapterStorageManager
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
@@ -47,9 +48,9 @@ class MangaRepository(
      *
      * @param mangaUuid The UUID of the manga (used for folder naming).
      * @param chapterId The UUID of the chapter to download.
-     * @param toExternal If true, saves to permanent storage; if false, saves to cache.
+     * @param location The storage location destination.
      */
-    suspend fun downloadChapter(mangaUuid: String, chapterId: String, toExternal: Boolean) = withContext(Dispatchers.IO) {
+    suspend fun downloadChapter(mangaUuid: String, chapterId: String, location: ChapterStorageLocation) = withContext(Dispatchers.IO) {
         try {
             val atHome = apiService.getAtHomeServer(chapterId)
             val baseUrl = atHome.baseUrl
@@ -64,14 +65,15 @@ class MangaRepository(
                     mangaId = mangaUuid,
                     chapterId = chapterId,
                     fileName = "page_${String.format("%03d", index + 1)}.jpg",
-                    toExternal = toExternal
+                    location = location
                 )
                 if (!success) allSuccess = false
             }
 
             if (allSuccess) {
-                val status = if (toExternal) StorageStatus.DOWNLOADED else StorageStatus.CACHED
-                mangaDao.updateChapterStorageStatus(chapterId, status)
+                val status = if (location is ChapterStorageLocation.Cache) StorageStatus.CACHED else StorageStatus.DOWNLOADED
+                val rootUri = if (location is ChapterStorageLocation.UserFolder) location.treeUri else null
+                mangaDao.updateChapterStorage(chapterId, status, rootUri)
             }
         } catch (e: Exception) {
             e.printStackTrace()

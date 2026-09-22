@@ -2,6 +2,8 @@ package com.example.project01_group05.ui.home
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Settings
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.grid.GridCells
@@ -34,6 +36,7 @@ fun HomeScreen(
     viewModel: HomeViewModel = viewModel(),
     onLogoutClick: () -> Unit = {},
     onSearchClick: () -> Unit = {},
+    onSettingsClick: () -> Unit = {},
     onMangaSelected: (String) -> Unit = {}
 ) {
     val uiState by viewModel.uiState.collectAsState()
@@ -42,7 +45,7 @@ fun HomeScreen(
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { 
+                title = {
                     Text(
                         if (uiState.selectedTagForSeeAll != null) {
                             "${uiState.selectedTagForSeeAll} Manga"
@@ -51,7 +54,7 @@ fun HomeScreen(
                         } else {
                             "MangaReader"
                         }
-                    ) 
+                    )
                 },
                 navigationIcon = {
                     if (uiState.selectedTagForSeeAll != null) {
@@ -61,6 +64,12 @@ fun HomeScreen(
                     }
                 },
                 actions = {
+                    IconButton(onClick = onSettingsClick) {
+                        Icon(
+                            imageVector = Icons.Default.Settings,
+                            contentDescription = "Settings"
+                        )
+                    }
                     if (uiState.selectedTagForSeeAll == null) {
                         IconButton(onClick = onSearchClick) {
                             Icon(

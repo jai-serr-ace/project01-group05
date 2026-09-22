@@ -15,6 +15,8 @@ import com.example.project01_group05.ui.admin.AdminScreen
 import com.example.project01_group05.ui.admin.UserManagementScreen
 import com.example.project01_group05.ui.details.MangaDetailsScreen
 import com.example.project01_group05.ui.details.MangaDetailsViewModel
+import com.example.project01_group05.ui.downloadManager.DownloadManagerScreen
+import com.example.project01_group05.ui.downloadManager.DownloadManagerViewModel
 import com.example.project01_group05.ui.home.HomeScreen
 import com.example.project01_group05.ui.home.HomeViewModel
 import com.example.project01_group05.ui.login.CreateAccountScreen
@@ -114,6 +116,26 @@ class MainActivity : ComponentActivity() {
                             onSearchClick = {
                                 searchViewModel.setSafeOnly(homeViewModel.uiState.value.isSafeOnly)
                                 currentScreen = "search"
+                            },
+                            onSettingsClick = {
+                                currentScreen = "settings"
+                            },
+                            onMangaSelected = { mangaId ->
+                                selectedMangaId = mangaId
+                                previousScreen = "home"
+                                currentScreen = "details"
+                            }
+                        )
+                    }
+
+                    "settings" -> {
+                        val downloadViewModel = remember {
+                            DownloadManagerViewModel(application)
+                        }
+                        DownloadManagerScreen(
+                            viewModel = downloadViewModel,
+                            onBackClick = {
+                                currentScreen = "home"
                             },
                             onMangaSelected = { mangaId ->
                                 selectedMangaId = mangaId

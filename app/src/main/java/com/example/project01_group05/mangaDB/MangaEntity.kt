@@ -7,6 +7,7 @@ import androidx.room.PrimaryKey
 data class MangaEntity(
     @PrimaryKey(autoGenerate = true)
     val id: Int = 0,
+    val mangaDexId: String? = null,
     val title: String? = null,
     val cover: String? = null,
     val chapterLst: Int? = null,

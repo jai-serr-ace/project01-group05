@@ -36,11 +36,21 @@ class DisplayChapterActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
 
         val mangaId = intent.getStringExtra(EXTRA_MANGA_ID)
-        val chapterId = intent.getStringExtra(EXTRA_CHAPTER_ID)
-        val title = intent.getStringExtra(EXTRA_CHAPTER_TITLE)
+        var currentChapterId = intent.getStringExtra(EXTRA_CHAPTER_ID)
+        val chapterIds = intent.getStringArrayListExtra("extra_chapter_ids") ?: emptyList<String>()
 
-        if (mangaId != null && chapterId != null) {
-            viewModel.loadChapter(mangaId, chapterId, title)
+        fun loadCurrentChapter(cId: String) {
+            if (mangaId != null) {
+                // Next chapter corresponds to the one *above* it in the descending list (index - 1)
+                val currentIndex = chapterIds.indexOf(cId)
+                val hasNext = currentIndex > 0
+                val sampleTitle = "Chapter ${chapterIds.size - currentIndex}"
+                viewModel.loadChapter(mangaId, cId, sampleTitle, hasNext)
+            }
+        }
+
+        if (currentChapterId != null) {
+            loadCurrentChapter(currentChapterId)
         }
 
         setContent {
@@ -49,8 +59,12 @@ class DisplayChapterActivity : ComponentActivity() {
                     ChapterReaderScreen(
                         viewModel = viewModel,
                         onNextChapter = {
-                            // Logic to transition to the next chapter
-                            // This could involve getting the next chapter ID from the Intent or API
+                            val currentIndex = chapterIds.indexOf(currentChapterId)
+                            if (currentIndex > 0) {
+                                val nextChapterId = chapterIds[currentIndex - 1]
+                                currentChapterId = nextChapterId
+                                loadCurrentChapter(nextChapterId)
+                            }
                         },
                         onBack = { finish() }
                     )

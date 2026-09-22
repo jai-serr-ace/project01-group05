@@ -1,17 +1,37 @@
+# Build and Compilation
+build/
+bin/
+gen/
+out/
+.gradle/
+.externalNativeBuild/
+.cxx/
+*.class
+*.dex
+*.apk
+*.ap_
+*.aab
+
+# Android Studio / IntelliJ
 *.iml
-.gradle
-/local.properties
-/.idea/caches
-/.idea/libraries
-/.idea/modules.xml
-/.idea/workspace.xml
-/.idea/navEditor.xml
-/.idea/assetWizardSettings.xml
-/.idea/deploymentTargetSelector.xml
-/.idea/androidTestResultsUserPreferences.xml
-.DS_Store
-/build
-/captures
-.externalNativeBuild
-.cxx
+.idea/
+!.idea/codeStyles/
+!.idea/runConfigurations/
+*.ipr
+*.iws
+
+# Local configuration
+local.properties
+
+# Logs and Captures
+*.log
+captures/
 .artifacts/
+
+# Emulation and Profiling
+*.hprof
+*.pyc
+
+# OS specific
+.DS_Store
+Thumbs.db

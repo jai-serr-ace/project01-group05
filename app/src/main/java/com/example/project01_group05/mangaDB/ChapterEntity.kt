@@ -48,5 +48,6 @@ data class ChapterEntity(
     val chapterNumber: String? = null,
     val volume: String? = null,
     val pagesCount: Int,
-    val storageStatus: StorageStatus = StorageStatus.NONE
+    val storageStatus: StorageStatus = StorageStatus.NONE,
+    val downloadRootUri: String? = null
 )
