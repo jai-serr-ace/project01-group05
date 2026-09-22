@@ -7,8 +7,8 @@ import retrofit2.Response
 class MangaRepository : MangaSearchRepository {
 
     fun fetchManga(
-        contentRatings: List<String> = listOf("safe", "suggestive"),
-        callback: MangaCallback
+        callback: MangaCallback,
+        contentRatings: List<String> = listOf("safe", "suggestive")
     ) {
 
         val api = MangaDexClient.getApi()
