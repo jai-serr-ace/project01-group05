@@ -20,6 +20,7 @@ import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
@@ -212,12 +213,34 @@ private fun MangaSearchResultItem(
             Column(
                 modifier = Modifier.weight(1f)
             ) {
-                Text(
-                    text = manga.attributes.getDisplayTitle(),
-                    style = MaterialTheme.typography.titleMedium,
-                    maxLines = 3,
-                    overflow = TextOverflow.Ellipsis
-                )
+                Row(
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Text(
+                        text = manga.attributes.getDisplayTitle(),
+                        style = MaterialTheme.typography.titleMedium,
+                        maxLines = 3,
+                        overflow = TextOverflow.Ellipsis,
+                        modifier = Modifier.weight(1f, fill = false)
+                    )
+
+                    val rating = manga.attributes.contentRating
+                    if (!rating.isNullOrEmpty()) {
+                        Spacer(modifier = Modifier.width(6.dp))
+                        val is18 = rating == "erotica" || rating == "pornographic"
+                        Surface(
+                            color = if (is18) MaterialTheme.colorScheme.errorContainer else MaterialTheme.colorScheme.secondaryContainer,
+                            shape = MaterialTheme.shapes.extraSmall
+                        ) {
+                            Text(
+                                text = if (is18) "18+" else rating.replaceFirstChar { it.uppercase() },
+                                style = MaterialTheme.typography.labelSmall,
+                                color = if (is18) MaterialTheme.colorScheme.onErrorContainer else MaterialTheme.colorScheme.onSecondaryContainer,
+                                modifier = Modifier.padding(horizontal = 4.dp, vertical = 2.dp)
+                            )
+                        }
+                    }
+                }
 
                 Spacer(
                     modifier = Modifier.height(6.dp)

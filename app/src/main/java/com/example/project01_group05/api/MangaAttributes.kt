@@ -6,7 +6,8 @@ data class MangaAttributes(
     val description: Map<String, String>? = null,
     val status: String? = null,
     val year: Int? = null,
-    val originalLanguage: String? = null
+    val originalLanguage: String? = null,
+    val contentRating: String? = null
 ) {
 
     fun getDisplayTitle(): String {

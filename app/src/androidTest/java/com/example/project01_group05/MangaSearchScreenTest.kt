@@ -154,6 +154,7 @@ class MangaSearchScreenTest {
 
         override fun searchManga(
             title: String,
+            contentRatings: List<String>,
             callback: MangaCallback
         ) {
             callback.onSuccess(results)

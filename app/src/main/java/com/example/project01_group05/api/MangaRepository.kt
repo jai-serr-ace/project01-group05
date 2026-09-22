@@ -4,13 +4,16 @@ import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 
-class MangaRepository : MangaSearchRepository{
+class MangaRepository : MangaSearchRepository {
 
-    fun fetchManga(callback: MangaCallback) {
+    fun fetchManga(
+        callback: MangaCallback,
+        contentRatings: List<String> = listOf("safe", "suggestive")
+    ) {
 
         val api = MangaDexClient.getApi()
 
-        api.getManga(10).enqueue(object : Callback<MangaResponse> {
+        api.getManga(limit = 10, contentRating = contentRatings).enqueue(object : Callback<MangaResponse> {
 
             override fun onResponse(
                 call: Call<MangaResponse>,
@@ -43,11 +46,12 @@ class MangaRepository : MangaSearchRepository{
 
     override fun searchManga(
         title: String,
+        contentRatings: List<String>,
         callback: MangaCallback
     ) {
         val api = MangaDexClient.getApi()
 
-        api.searchManga(title).enqueue(object : Callback<MangaResponse> {
+        api.searchManga(title = title, contentRating = contentRatings).enqueue(object : Callback<MangaResponse> {
 
             override fun onResponse(
                 call: Call<MangaResponse>,
