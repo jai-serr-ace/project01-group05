@@ -10,10 +10,16 @@ import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.lazy.items
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Search
+import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
@@ -34,6 +40,7 @@ fun HomeScreen(
     onMangaSelected: (String) -> Unit = {}
 ) {
     val uiState by viewModel.uiState.collectAsState()
+    var showSettingsMenu by remember { mutableStateOf(false) }
 
     Scaffold(
         topBar = {
@@ -64,12 +71,54 @@ fun HomeScreen(
                         )
                     }
                     if (uiState.selectedTagForSeeAll == null) {
-                        TextButton(onClick = onSearchClick) {
-                            Text("Search")
+                        IconButton(onClick = onSearchClick) {
+                            Icon(
+                                imageVector = Icons.Default.Search,
+                                contentDescription = "Search"
+                            )
                         }
                     }
-                    TextButton(onClick = onLogoutClick) {
-                        Text("Logout")
+                    Box {
+                        IconButton(onClick = { showSettingsMenu = true }) {
+                            Icon(
+                                imageVector = Icons.Default.Settings,
+                                contentDescription = "Settings"
+                            )
+                        }
+                        DropdownMenu(
+                            expanded = showSettingsMenu,
+                            onDismissRequest = { showSettingsMenu = false }
+                        ) {
+                            DropdownMenuItem(
+                                text = {
+                                    Row(
+                                        verticalAlignment = Alignment.CenterVertically,
+                                        horizontalArrangement = Arrangement.SpaceBetween,
+                                        modifier = Modifier.fillMaxWidth()
+                                    ) {
+                                        Text("Safe Mode")
+                                        Spacer(modifier = Modifier.width(12.dp))
+                                        Switch(
+                                            checked = uiState.isSafeOnly,
+                                            onCheckedChange = { isChecked ->
+                                                viewModel.toggleSafeOnly(isChecked)
+                                            }
+                                        )
+                                    }
+                                },
+                                onClick = {
+                                    viewModel.toggleSafeOnly(!uiState.isSafeOnly)
+                                }
+                            )
+                            HorizontalDivider()
+                            DropdownMenuItem(
+                                text = { Text("Logout") },
+                                onClick = {
+                                    showSettingsMenu = false
+                                    onLogoutClick()
+                                }
+                            )
+                        }
                     }
                 }
             )
@@ -209,24 +258,45 @@ fun MangaCoverCard(
         Column(
             modifier = Modifier.fillMaxSize()
         ) {
-            val coverUrl = manga.getCoverImageUrl()
-            if (coverUrl != null) {
-                AsyncImage(
-                    model = coverUrl,
-                    contentDescription = manga.attributes.getDisplayTitle(),
-                    contentScale = ContentScale.Crop,
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .height(160.dp)
-                )
-            } else {
-                Box(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .height(160.dp),
-                    contentAlignment = Alignment.Center
-                ) {
-                    Text("No Cover", style = MaterialTheme.typography.bodySmall)
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(160.dp)
+            ) {
+                val coverUrl = manga.getCoverImageUrl()
+                if (coverUrl != null) {
+                    AsyncImage(
+                        model = coverUrl,
+                        contentDescription = manga.attributes.getDisplayTitle(),
+                        contentScale = ContentScale.Crop,
+                        modifier = Modifier.fillMaxSize()
+                    )
+                } else {
+                    Box(
+                        modifier = Modifier.fillMaxSize(),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        Text("No Cover", style = MaterialTheme.typography.bodySmall)
+                    }
+                }
+
+                val rating = manga.attributes.contentRating
+                if (!rating.isNullOrEmpty()) {
+                    val is18 = rating == "erotica" || rating == "pornographic"
+                    Surface(
+                        color = if (is18) MaterialTheme.colorScheme.errorContainer else MaterialTheme.colorScheme.secondaryContainer,
+                        shape = MaterialTheme.shapes.extraSmall,
+                        modifier = Modifier
+                            .align(Alignment.TopEnd)
+                            .padding(4.dp)
+                    ) {
+                        Text(
+                            text = if (is18) "18+" else rating.replaceFirstChar { it.uppercase() },
+                            style = MaterialTheme.typography.labelSmall,
+                            color = if (is18) MaterialTheme.colorScheme.onErrorContainer else MaterialTheme.colorScheme.onSecondaryContainer,
+                            modifier = Modifier.padding(horizontal = 4.dp, vertical = 2.dp)
+                        )
+                    }
                 }
             }
 

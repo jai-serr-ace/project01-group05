@@ -1,84 +1,60 @@
 package com.example.project01_group05.ui.search
 
-import androidx.lifecycle.ViewModel
 import com.example.project01_group05.api.MangaCallback
-import com.example.project01_group05.api.MangaData
-import com.example.project01_group05.api.MangaRepository
 import com.example.project01_group05.api.MangaSearchRepository
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.asStateFlow
+import org.junit.Assert.assertEquals
+import org.junit.Assert.assertFalse
+import org.junit.Assert.assertTrue
+import org.junit.Test
 
-data class MangaSearchUiState(
-    val query: String = "",
-    val results: List<MangaData> = emptyList(),
-    val isLoading: Boolean = false,
-    val errorMessage: String? = null,
-    val hasSearched: Boolean = false
-)
+class MangaSearchViewModelTest {
 
-class MangaSearchViewModel(
-    private val repository: MangaSearchRepository = MangaRepository()
-) : ViewModel() {
-
-    private val _uiState = MutableStateFlow(
-        MangaSearchUiState()
-    )
-
-    val uiState: StateFlow<MangaSearchUiState> =
-        _uiState.asStateFlow()
-
-    fun updateQuery(query: String) {
-        _uiState.value = _uiState.value.copy(
-            query = query
-        )
-    }
-
-    fun search() {
-        val title = _uiState.value.query.trim()
-
-        if (title.isEmpty()) {
-            _uiState.value = _uiState.value.copy(
-                results = emptyList(),
-                isLoading = false,
-                errorMessage = "Please enter a manga title.",
-                hasSearched = false
-            )
-            return
+    @Test
+    fun setSafeOnly_updatesState() {
+        val fakeRepo = object : MangaSearchRepository {
+            override fun searchManga(
+                title: String,
+                contentRatings: List<String>,
+                callback: MangaCallback
+            ) {
+                callback.onSuccess(emptyList())
+            }
         }
 
-        _uiState.value = _uiState.value.copy(
-            isLoading = true,
-            errorMessage = null,
-            hasSearched = true
-        )
+        val viewModel = MangaSearchViewModel(fakeRepo)
 
-        repository.searchManga(
-            title,
-            object : MangaCallback {
+        assertTrue(viewModel.uiState.value.isSafeOnly)
 
-                override fun onSuccess(
-                    mangaList: List<MangaData>
-                ) {
-                    _uiState.value = _uiState.value.copy(
-                        results = mangaList,
-                        isLoading = false,
-                        errorMessage = null,
-                        hasSearched = true
-                    )
-                }
+        viewModel.setSafeOnly(false)
 
-                override fun onError(
-                    errorMessage: String
-                ) {
-                    _uiState.value = _uiState.value.copy(
-                        results = emptyList(),
-                        isLoading = false,
-                        errorMessage = errorMessage,
-                        hasSearched = true
-                    )
-                }
+        assertFalse(viewModel.uiState.value.isSafeOnly)
+    }
+
+    @Test
+    fun searchManga_passesCorrectContentRatings() {
+        var passedRatings: List<String>? = null
+
+        val fakeRepo = object : MangaSearchRepository {
+            override fun searchManga(
+                title: String,
+                contentRatings: List<String>,
+                callback: MangaCallback
+            ) {
+                passedRatings = contentRatings
+                callback.onSuccess(emptyList())
             }
-        )
+        }
+
+        val viewModel = MangaSearchViewModel(fakeRepo)
+        viewModel.updateQuery("Naruto")
+
+        // Search with Safe Only enabled by default
+        viewModel.search()
+        assertEquals(listOf("safe"), passedRatings)
+
+        // Disable Safe Only and search again
+        viewModel.setSafeOnly(false)
+        viewModel.search()
+        assertEquals(listOf("safe", "suggestive", "erotica", "pornographic"), passedRatings)
     }
 }
