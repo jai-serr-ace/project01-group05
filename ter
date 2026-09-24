@@ -1,0 +1,22 @@
+  [31morigin/Admin[m
+  [31morigin/Database[m
+  [31morigin/HEAD[m -> origin/master
+  [31morigin/UserDAO[m
+  [31morigin/chapterDB[m
+  [31morigin/composeUI-migration[m
+  [31morigin/display[m
+  [31morigin/feature/detekt[m
+  [31morigin/feature/home-page[m
+  [31morigin/feature/login-page[m
+  [31morigin/feature/manga-detailes[m
+  [31morigin/feature/search-manga[m
+  [31morigin/firstmerge[m
+  [31morigin/fix/home-search-details-integration[m
+  [31morigin/fix/login-test-typo[m
+  [31morigin/fix/search-bar-feature[m
+  [31morigin/fix/unnecessary-comment[m
+  [31morigin/issue-2-mangadex-api[m
+  [31morigin/issue-migrate-mangadex-kotlin[m
+  [31morigin/mangaDAO[m
+  [31morigin/master[m
+  [31morigin/revert-28-Database[m

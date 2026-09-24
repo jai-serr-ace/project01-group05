@@ -24,7 +24,8 @@ interface MangaDexApi {
 
     @GET("manga/{id}")
     fun getMangaById(
-        @Path("id") id: String
+        @Path("id") id: String,
+        @Query("includes[]") includes: List<String> = listOf("cover_art")
     ): Call<MangaDetailsResponse>
 
     @GET("manga/{id}/feed")

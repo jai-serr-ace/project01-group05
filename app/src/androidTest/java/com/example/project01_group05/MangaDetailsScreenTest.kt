@@ -38,7 +38,7 @@ class MangaDetailsScreenTest {
             MangaDetailsContent(
                 manga = testManga,
                 onBackClick = {},
-                onViewChaptersClick = {}
+                onViewChaptersClick = {},
             )
         }
 
@@ -77,7 +77,7 @@ class MangaDetailsScreenTest {
                 onBackClick = {
                     backClicked = true
                 },
-                onViewChaptersClick = {}
+                onViewChaptersClick = {},
             )
         }
 
@@ -98,7 +98,7 @@ class MangaDetailsScreenTest {
                 onBackClick = {},
                 onViewChaptersClick = {
                     viewChaptersClicked = true
-                }
+                },
             )
         }
 

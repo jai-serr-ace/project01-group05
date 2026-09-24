@@ -14,4 +14,5 @@ data class MangaEntity(
     val status: Boolean? = null,
     val author: String? = null,
     val description: String? = null
+
 )

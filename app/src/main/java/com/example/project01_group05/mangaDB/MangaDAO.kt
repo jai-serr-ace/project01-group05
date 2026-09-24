@@ -6,6 +6,8 @@ import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import androidx.room.Update
+import kotlinx.coroutines.flow.Flow
+
 
 //Note**: manga for now works as a dummy variable, it might need to be
 //changed in the future to work with the database correctly.
@@ -26,10 +28,13 @@ interface MangaDAO {
     suspend fun deleteManga(manga: MangaEntity)
 
     @Query("SELECT * FROM manga")
-    suspend fun getAllMangas(): List<MangaEntity>
+    fun getAllMangas(): Flow<List<MangaEntity>>
 
     @Query("SELECT * FROM manga WHERE mangaDexId = :mangaDexId LIMIT 1")
     suspend fun getMangaByDexId(mangaDexId: String): MangaEntity?
+
+    @Query("DELETE FROM manga WHERE mangaDexId = :mangaDexId")
+    suspend fun deleteMangaByDexId(mangaDexId: String)
 
     @androidx.room.Transaction
     @Query("SELECT * FROM manga")

@@ -23,13 +23,19 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
+import coil.compose.AsyncImage
 import com.example.project01_group05.api.MangaData
 import com.example.project01_group05.ui.chapterDisplay.DisplayChapterActivity
 import com.example.project01_group05.ui.chapterList.ChapterListPopup
 import com.example.project01_group05.ui.chapterList.ChapterListViewModel
+import com.example.project01_group05.mangaDB.MangaDB
+import com.example.project01_group05.mangaDB.MangaEntity
+import com.example.project01_group05.ui.favorites.FavoriteModel
+
 
 @Composable
 fun MangaDetailsScreen(
@@ -40,10 +46,28 @@ fun MangaDetailsScreen(
     val uiState by viewModel.uiState.collectAsState()
     var showChapterList by remember { mutableStateOf(false) }
     val context = LocalContext.current
+    val mangaDao = MangaDB.getDatabase(context).mangaDao()
+
+    val favoriteModel: FavoriteModel = viewModel(
+        factory = FavoriteModel.FavoriteModelFactory(mangaDao)
+    )
+
+    var isFavorite by remember(mangaId) {
+        mutableStateOf(false)
+    }
 
     LaunchedEffect(mangaId) {
         viewModel.loadManga(mangaId)
     }
+
+    LaunchedEffect(uiState.manga?.id) {
+        val manga = uiState.manga
+
+        if (manga != null) {
+            isFavorite = favoriteModel.isFavorite(manga.id)
+        }
+    }
+
 
     //This button displays the chapter list when clicked
     if (showChapterList && uiState.manga != null) {
@@ -101,8 +125,12 @@ fun MangaDetailsScreen(
         uiState.manga != null -> {
             MangaDetailsContent(
                 manga = uiState.manga!!,
+                favoriteModel = favoriteModel,
+                isFavorite = isFavorite,
+                onFavoriteChanged = { isFavorite = it },
                 onBackClick = onBackClick,
                 onViewChaptersClick = { showChapterList = true }
+
             )
         }
     }
@@ -111,8 +139,12 @@ fun MangaDetailsScreen(
 @Composable
 fun MangaDetailsContent(
     manga: MangaData,
+    favoriteModel: FavoriteModel,
+    isFavorite: Boolean,
+    onFavoriteChanged: (Boolean) -> Unit,
     onBackClick: () -> Unit,
     onViewChaptersClick: () -> Unit
+
 ) {
     Column(
         modifier = Modifier
@@ -131,6 +163,19 @@ fun MangaDetailsContent(
             style = MaterialTheme.typography.headlineMedium
         )
 
+        val coverUrl = manga.getCoverImageUrl()
+        if (!coverUrl.isNullOrEmpty()) {
+            Spacer(modifier = Modifier.height(12.dp))
+            AsyncImage(
+                model = coverUrl,
+                contentDescription = manga.attributes.getDisplayTitle(),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(240.dp),
+                contentScale = ContentScale.Fit
+            )
+        }
+
         Spacer(
             modifier = Modifier.height(16.dp)
         )
@@ -140,6 +185,45 @@ fun MangaDetailsContent(
             modifier = Modifier.fillMaxWidth()
         ) {
             Text("View Chapters")
+        }
+
+        Spacer(
+            modifier = Modifier.height(16.dp)
+        )
+
+        Button(
+            onClick = {
+                val coverUrl = manga.getCoverImageUrl()
+
+                println("MANGA COVER URL = $coverUrl")
+                val favoriteManga = MangaEntity(
+                    mangaDexId = manga.id,
+                    title = manga.attributes.getDisplayTitle(),
+                    cover = manga.getCoverImageUrl(),
+                    description = manga.attributes.getDisplayDescription()
+
+                )
+
+                if(isFavorite) {
+                    favoriteModel.removeFavorite(manga.id)
+                    onFavoriteChanged(false)
+
+
+                } else {
+                    favoriteModel.saveFavorite(favoriteManga)
+                    onFavoriteChanged(true)
+
+                }
+            },
+            modifier = Modifier.fillMaxWidth()
+            
+        ) {
+            Text(text = if (isFavorite) {
+                "Remove from Favorites"
+            } else {
+                "Save to Favorites"
+            }
+            )        
         }
 
         Spacer(

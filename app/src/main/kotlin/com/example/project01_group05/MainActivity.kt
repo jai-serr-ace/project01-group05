@@ -24,6 +24,8 @@ import com.example.project01_group05.ui.login.LoginScreen
 import com.example.project01_group05.ui.search.MangaSearchScreen
 import com.example.project01_group05.ui.search.MangaSearchViewModel
 import kotlinx.coroutines.launch
+import com.example.project01_group05.ui.favorites.FavoriteModel
+import com.example.project01_group05.ui.favorites.FavoritesGridScreen
 
 class MainActivity : ComponentActivity() {
 
@@ -71,6 +73,15 @@ class MainActivity : ComponentActivity() {
             val searchViewModel = remember {
                 MangaSearchViewModel()
             }
+
+            val favoriteModel: FavoriteModel = viewModel(
+                factory = FavoriteModel.FavoriteModelFactory(
+                    database.mangaDao()
+                )
+            )
+
+
+
 
             if (loggedInUser == null) {
                 if (currentScreen == "createAccount") {
@@ -120,6 +131,10 @@ class MainActivity : ComponentActivity() {
                             onSettingsClick = {
                                 currentScreen = "settings"
                             },
+
+                            onFavoritesClick = {
+                                currentScreen = "favorites"
+                            },
                             onMangaSelected = { mangaId ->
                                 selectedMangaId = mangaId
                                 previousScreen = "home"
@@ -127,6 +142,23 @@ class MainActivity : ComponentActivity() {
                             }
                         )
                     }
+
+                    "favorites" -> {
+                        FavoritesGridScreen(
+                            viewModel = favoriteModel,
+                            onMangaClick = { mangaId ->
+                                selectedMangaId = mangaId
+                                previousScreen = "favorites"
+                                currentScreen = "details"
+                            },
+                            onBackClick = {
+                                currentScreen ="home"
+                            }
+
+                        )
+                    }
+
+
 
                     "settings" -> {
                         val downloadViewModel = remember {

@@ -26,6 +26,9 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import coil.compose.AsyncImage
 import com.example.project01_group05.api.MangaData
+import com.example.project01_group05.mangaDB.MangaDB
+import com.example.project01_group05.ui.favorites.FavoriteModel
+import com.example.project01_group05.ui.favorites.FavoritesScreen
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -35,10 +38,18 @@ fun HomeScreen(
     onLogoutClick: () -> Unit = {},
     onSearchClick: () -> Unit = {},
     onSettingsClick: () -> Unit = {},
-    onMangaSelected: (String) -> Unit = {}
+    onMangaSelected: (String) -> Unit = {},
+    onFavoritesClick: () -> Unit
 ) {
     val uiState by viewModel.uiState.collectAsState()
     var showSettingsMenu by remember { mutableStateOf(false) }
+
+    val context = androidx.compose.ui.platform.LocalContext.current
+    val favoriteModel: FavoriteModel = viewModel(
+        factory = FavoriteModel.FavoriteModelFactory(
+            MangaDB.getDatabase(context).mangaDao()
+        )
+    )
 
     Scaffold(
         topBar = {
@@ -179,6 +190,20 @@ fun HomeScreen(
                         contentPadding = PaddingValues(vertical = 16.dp),
                         verticalArrangement = Arrangement.spacedBy(24.dp)
                     ) {
+
+                        item {
+                            FavoritesScreen(
+                                viewModel = favoriteModel,
+                                onMangaClick = onMangaSelected,
+                                onSeeAllClick = {
+                                    onFavoritesClick()
+
+                                }
+                            )
+                        }
+
+
+
                         items(uiState.popularTags, key = { it }) { tag ->
                             val mangaListForTag = uiState.mangaByTag[tag] ?: emptyList()
                             if (mangaListForTag.isNotEmpty()) {
