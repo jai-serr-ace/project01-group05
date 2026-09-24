@@ -8,6 +8,7 @@ import androidx.room.migration.Migration
 import androidx.sqlite.db.SupportSQLiteDatabase
 import com.example.project01_group05.database.UserDao
 import com.example.project01_group05.database.entities.UserEntity
+import com.example.project01_group05.mangaDB.MangaDB
 
 @Database(
     entities = [

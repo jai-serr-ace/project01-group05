@@ -16,6 +16,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.flow.first
 
 data class DownloadManagerUiState(
     val downloadedChapters: List<ChapterEntity> = emptyList(),
@@ -44,8 +45,12 @@ class DownloadManagerViewModel(application: Application) : AndroidViewModel(appl
     fun loadDownloads() {
         viewModelScope.launch(Dispatchers.IO) {
             val chapters = db.mangaDao().getAllDownloadedChapters()
-            val mangas = db.mangaDao().getAllMangas()
-            val map = mangas.associate { it.id to (it.mangaDexId ?: "") }
+            val mangas = db.mangaDao().getAllMangas().first()
+
+            val map = mangas.associate { manga ->
+                manga.id to (manga.mangaDexId ?: "")
+            }
+
             _uiState.value = _uiState.value.copy(
                 downloadedChapters = chapters,
                 mangaIdToDexId = map
@@ -94,7 +99,7 @@ class DownloadManagerViewModel(application: Application) : AndroidViewModel(appl
     //and what manga it belongs to.
     fun deleteChapter(chapter: ChapterEntity) {
         viewModelScope.launch(Dispatchers.IO) {
-            val manga = db.mangaDao().getAllMangas().find { it.id == chapter.mangaId }
+            val manga = db.mangaDao().getAllMangas().first().find{ manga -> manga.id == chapter.mangaId }
             val mangaDexId = manga?.mangaDexId ?: return@launch
             val location = when {
                 chapter.storageStatus == StorageStatus.CACHED -> ChapterStorageLocation.Cache
